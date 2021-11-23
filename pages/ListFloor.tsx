@@ -4,6 +4,7 @@ import Styled from "styled-components";
 import MuiButton from "@material-ui/core/Button";
 import { styled } from "@material-ui/core/styles";
 import { spacing } from '@mui/system';
+import { useRouter } from 'next/router'
 
 const Button = styled(MuiButton)(spacing);
 
@@ -27,30 +28,41 @@ const place_holder = [
 
 const max_list = 8;
 
+const NavBar = Styled.div`
+    p {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+`
+
 const FloorRow = Styled.div`
   width: 342px;
   display: inline-block;
 `
 
 const FloorBox = Styled.div`
-  background-color: #fcf7f7;
-  border-radius: 15px;
+    text-align: center;
+    background-color: #fcf7f7;
+    border-radius: 15px;
   
-  margin-top: 40px;
-  margin-right: 30px;
+    margin-top: 40px;
+    margin-right: 30px;
 
-  padding-left: 15px;
-  padding-top: 1px;
-  padding-bottom: 10px;
+    padding-top: 1px;
+    padding-bottom: 10px;
   
-  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 
-  p {
-    font-size: 16px;
+    p {
+        font-size: 16px;
     
-    padding-top: 2px;
-    padding-bottom: 2px;
-  }
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+`
+
+const ImageBox = Styled.div`
+    text-align: center;
 `
 
 export function ListFloor() {
@@ -67,6 +79,8 @@ export function ListFloor() {
     const [state, setState] = useState("home");
     const [catImage, setCatImage] = useState("");
 
+    const router = useRouter()
+
     function getFloorPrice(floor_value: any) {
         return ((floor_value * ethPrice).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     }
@@ -79,9 +93,10 @@ export function ListFloor() {
             })
     }
 
-    function updateState(selected_collection: string) {
-        if (selected_collection == "BAYC") {
-            setState("BAYC");
+    function updateState(state: string) {
+        if (state == "PUDGY") {
+            setState("PUDGY")
+            router.push('/PUDGY');
         }
     }
 
@@ -95,13 +110,17 @@ export function ListFloor() {
     // }
 
     useEffect(() => {
+
+        window.addEventListener('popstate', function (event) {
+            if (state == "PUDGY") {
+                setState("");
+                router.push("/")
+            }
+        }, false);
+
         async function getInfo(url: string, setDataPrice: any) {
             try {
-                fetch(url, {
-                    headers: {
-                        "test": "test",
-                    }
-                })
+                fetch(url)
                     .then(res => res.json())
                     .then(rawdata => {
 
@@ -123,8 +142,6 @@ export function ListFloor() {
                                 price_data.push(new_object);
                             }
                         }
-
-                        console.log(price_data);
                         setDataPrice(price_data);
                         setDataPrice([...price_data].sort((b, a) => b.price - a.price));
                     });
@@ -134,38 +151,40 @@ export function ListFloor() {
         }
 
         getETHPrice();
+
+        setState(window.location.href.split('/')[3]);
+
         getInfo(pudgy_url, setPudgyPrice);
         getInfo(KIA_url, setKIAPrice);
         getInfo(cool_cats_url, setCoolCatsPrice);
         getInfo(sappy_seal_url, setSappySealPrice);
         getInfo(BAYC_url, setBAYCPrice);
         getInfo(MAYC_url, setMAYCprice);
-    }, [])
+    }, [state])
 
     return (
         <>
             <div>
-                <div>
+                <NavBar>
                     <h1> NFT Scalpers Dream</h1>
                     <p> ETH Price : ${ethPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </p>
 
-                    <Button onClick={() => setState("home")} style={{ minWidth: '112px' }} mr={5} size="large" variant="outlined"> ETH </Button>
+                    <Button onClick={() => setState("")} style={{ minWidth: '112px' }} mr={5} size="large" variant="outlined"> ETH </Button>
                     <Button style={{ minWidth: '112px' }} mr={5} size="large" variant="outlined"> MATIC </Button>
 
-
-                    <Button style={{ minWidth: '112px' }} mr={5} size="large" variant="outlined"> SOL </Button>
-                    <Button style={{ minWidth: '112px' }} mr={5} size="large" variant="outlined"> EOS </Button>
+                    <Button style={{ minWidth: '112px' }} mr={5} mt={2} size="large" variant="outlined"> SOL </Button>
+                    <Button style={{ minWidth: '112px' }} mr={5} mt={2} size="large" variant="outlined"> EOS </Button>
 
 
                     {/* {window.innerWidth < 999 && <>
                         <Button style={{ minWidth: '112px' }} mr={5} mt={2} size="large" variant="outlined"> SOL </Button>
                         <Button style={{ minWidth: '112px' }} mr={5} mt={2} size="large" variant="outlined"> EOS </Button>
                     </>} */}
-                </div>
+                </NavBar>
 
-                {state == "home" && <>
+                {state == "" && <>
                     <FloorRow>
-                        <FloorBox onClick={() => setState("PUDGY")}>
+                        <FloorBox onClick={() => updateState("PUDGY")}>
                             <h2> Pudgy Floor Check </h2>
                             {pudgyPrice.slice(0, 1).map((data, id) => (
                                 <h3 key={id}> Floor: ${getFloorPrice(data.price)} </h3>
@@ -209,7 +228,7 @@ export function ListFloor() {
                     </FloorRow>
 
                     <FloorRow>
-                        <FloorBox onClick={() => updateState("BAYC")}>
+                        <FloorBox onClick={() => setState("BAYC")}>
                             <h2> BAYC Floor Check </h2>
                             {BAYCPrice.slice(0, 1).map((data, id) => (
                                 <h3 key={id}> Test: ${getFloorPrice(data.price)} </h3>
@@ -240,16 +259,18 @@ export function ListFloor() {
                     ))}
                 </>}
 
-                {state == "PUDGY" && <>
-                    {pudgyPrice.slice(0, max_list).map((data) => (
-                        <>
-                            <h3> Price: {data.price} </h3>
-                            <a href={"https://opensea.io/assets/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/" + data.id} >
-                                <img width="200px" height="200px" src={"https://ipfs.io/ipfs/QmNf1UsmdGaMbpatQ6toXSkzDpizaGmC9zfunCyoz1enD5/penguin/" + data.id + ".png"} alt="" />
-                            </a>
-                        </>
-                    ))}
-                </>}
+                <ImageBox>
+                    {state == "PUDGY" && <>
+                        {pudgyPrice.slice(0, max_list).map((data) => (
+                            <>
+                                <h3> Price: {data.price} </h3>
+                                <a href={"https://opensea.io/assets/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/" + data.id} >
+                                    <img width="200px" height="200px" src={"https://ipfs.io/ipfs/QmNf1UsmdGaMbpatQ6toXSkzDpizaGmC9zfunCyoz1enD5/penguin/" + data.id + ".png"} alt="" />
+                                </a>
+                            </>
+                        ))}
+                    </>}
+                </ImageBox>
 
                 {state == "SAPPY" && <>
                     {sappySealPrice.slice(0, max_list).map((data) => (

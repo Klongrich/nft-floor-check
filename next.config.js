@@ -26,6 +26,11 @@ module.exports = {
         source: '/prices/mayc',
         destination: 'https://data.rarity.tools/prices/mutant-ape-yacht-club'
       }
+      ,
+      {
+        source: '/PUDGY',
+        destination: '/'
+      }
     ]
   },
   //Incomeing Request
