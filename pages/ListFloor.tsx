@@ -7,7 +7,7 @@ import { spacing } from '@mui/system';
 
 const Button = styled(MuiButton)(spacing);
 
-const pudgy_url = "https://data.rarity.tools/prices/pudgypenguins";
+const pudgy_url = "/prices/penguins";
 const cool_cats_url = "https://data.rarity.tools/prices/cool-cats-nft";
 const KIA_url = "https://data.rarity.tools/prices/koala-intelligence-agency";
 const sappy_seal_url = "https://data.rarity.tools/prices/sappy-seals";
@@ -98,7 +98,9 @@ export function ListFloor() {
         async function getInfo(url: string, setDataPrice: any) {
             try {
                 fetch(url, {
-
+                    headers: {
+                        "test": "test",
+                    }
                 })
                     .then(res => res.json())
                     .then(rawdata => {

@@ -1,10 +1,19 @@
 // next.config.js
 module.exports = {
+  async rewrites() {
+    return [
+      {
+        source: '/prices/penguins',
+        destination: 'https://data.rarity.tools/prices/pudgypenguins'
+      }
+    ]
+  },
+  //Incomeing Request
   async headers() {
     return [
       {
         // matching all API routes
-        source: "https://data.rarity.tools/prices/*",
+        source: "/prices/penguins",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "*" },
