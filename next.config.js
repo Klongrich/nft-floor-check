@@ -5,6 +5,26 @@ module.exports = {
       {
         source: '/prices/penguins',
         destination: 'https://data.rarity.tools/prices/pudgypenguins'
+      },
+      {
+        source: '/prices/coolcats',
+        destination: 'https://data.rarity.tools/prices/cool-cats-nft'
+      },
+      {
+        source: '/prices/kia',
+        destination: 'https://data.rarity.tools/prices/koala-intelligence-agency'
+      },
+      {
+        source: '/prices/seals',
+        destination: 'https://data.rarity.tools/prices/sappy-seals'
+      },
+      {
+        source: '/prices/bayc',
+        destination: 'https://data.rarity.tools/prices/boredapeyachtclub'
+      },
+      {
+        source: '/prices/mayc',
+        destination: 'https://data.rarity.tools/prices/mutant-ape-yacht-club'
       }
     ]
   },
@@ -13,7 +33,7 @@ module.exports = {
     return [
       {
         // matching all API routes
-        source: "/prices/penguins",
+        source: "/prices/:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "*" },

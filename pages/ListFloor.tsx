@@ -8,11 +8,11 @@ import { spacing } from '@mui/system';
 const Button = styled(MuiButton)(spacing);
 
 const pudgy_url = "/prices/penguins";
-const cool_cats_url = "https://data.rarity.tools/prices/cool-cats-nft";
-const KIA_url = "https://data.rarity.tools/prices/koala-intelligence-agency";
-const sappy_seal_url = "https://data.rarity.tools/prices/sappy-seals";
-const BAYC_url = "https://data.rarity.tools/prices/boredapeyachtclub";
-const MAYC_url = "https://data.rarity.tools/prices/mutant-ape-yacht-club";
+const cool_cats_url = "/prices/coolcats";
+const KIA_url = "/prices/kia";
+const sappy_seal_url = "/prices/seals";
+const BAYC_url = "/prices/bayc";
+const MAYC_url = "/prices/mayc";
 
 const place_holder = [
     {
