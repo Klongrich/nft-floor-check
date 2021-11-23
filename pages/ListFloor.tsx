@@ -166,7 +166,7 @@ export function ListFloor() {
         <>
             <div>
                 <NavBar>
-                    <h1> NFT Scalpers Dream</h1>
+                    <h1> NFT Floor Check</h1>
                     <p> ETH Price : ${ethPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </p>
 
                     <Button onClick={() => setState("")} style={{ minWidth: '112px' }} mr={5} size="large" variant="outlined"> ETH </Button>
