@@ -65,6 +65,7 @@ const NavBar = Styled.div`
         padding-top: 10px;
         padding-bottom: 10px;
     }
+    width: 380px;
 `
 
 const FloorRow = Styled.div`
@@ -257,11 +258,11 @@ export function ListFloor() {
                     <h1> NFT Floor Check</h1>
                     <p> ETH Price : ${ethPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </p>
 
-                    <Button onClick={() => setState("")} style={{ minWidth: '112px' }} mr={5} size="large" variant="outlined"> ETH </Button>
-                    <Button style={{ minWidth: '112px' }} mr={5} size="large" variant="outlined"> MATIC </Button>
+                    <Button onClick={() => setState("")} style={{ minWidth: '142px' }} mr={3} size="large" variant="outlined"> ETH </Button>
+                    <Button style={{ minWidth: '142px' }} mr={5} size="large" variant="outlined"> MATIC </Button>
 
-                    <Button style={{ minWidth: '112px' }} mr={5} mt={2} size="large" variant="outlined"> SOL </Button>
-                    <Button style={{ minWidth: '112px' }} mr={5} mt={2} size="large" variant="outlined"> EOS </Button>
+                    <Button style={{ minWidth: '142px' }} mr={3} mt={2} size="large" variant="outlined"> SOL </Button>
+                    <Button style={{ minWidth: '142px' }} mr={5} mt={2} size="large" variant="outlined"> EOS </Button>
 
 
                     {/* {window.innerWidth < 999 && <>
