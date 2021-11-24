@@ -4,7 +4,7 @@ import Styled from "styled-components";
 import MuiButton from "@material-ui/core/Button";
 import { styled } from "@material-ui/core/styles";
 import { spacing } from '@mui/system';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 
 const Button = styled(MuiButton)(spacing);
 
@@ -15,13 +15,45 @@ const sappy_seal_url = "/prices/seals";
 const BAYC_url = "/prices/bayc";
 const MAYC_url = "/prices/mayc";
 
+// var ipfsAPI = require('ipfs-api');
+// const ipfs = ipfsAPI('ipfs.infura.io', '5001', { protocol: 'https' })
+
 const place_holder = [
     {
-        id: "0",
+        id: "1",
         price: 13.37,
     },
     {
-        id: "0",
+        id: "2",
+        price: 13.37
+    },
+    {
+        id: "3",
+        price: 13.37
+    },
+    {
+        id: "4",
+        price: 13.37
+    },
+    {
+        id: "5",
+        price: 13.37
+    },
+    {
+        id: "6",
+        price: 13.37
+    }
+    ,
+    {
+        id: "7",
+        price: 13.37
+    },
+    {
+        id: "8",
+        price: 13.37
+    },
+    {
+        id: "9",
         price: 13.37
     }
 ];
@@ -65,19 +97,22 @@ const ImageBox = Styled.div`
     text-align: center;
 `
 
+const catImageURLs: string[] = [];
+const BAYCImageURLs: string[] = [];
+
 export function ListFloor() {
 
     const [ethPrice, setETHprice] = useState(0.00);
+
+    const [BAYCPrice, setBAYCPrice] = useState(place_holder);
+    const [MAYCPrice, setMAYCprice] = useState(place_holder);
 
     const [pudgyPrice, setPudgyPrice] = useState(place_holder);
     const [coolCatsPrice, setCoolCatsPrice] = useState(place_holder);
     const [KIAPrice, setKIAPrice] = useState(place_holder);
     const [sappySealPrice, setSappySealPrice] = useState(place_holder);
-    const [BAYCPrice, setBAYCPrice] = useState(place_holder);
-    const [MAYCPrice, setMAYCprice] = useState(place_holder);
 
     const [state, setState] = useState("home");
-    const [catImage, setCatImage] = useState("");
 
     const router = useRouter()
 
@@ -98,21 +133,27 @@ export function ListFloor() {
             setState("PUDGY")
             router.push('/PUDGY');
         }
+        else if (state == "KIA") {
+            setState("KIA");
+            router.push("/KIA");
+        }
+        else if (state == "SAPPY") {
+            setState("SAPPY");
+            router.push("SAPPY");
+        }
+        else if (state == "COOLCATS") {
+            setState("COOLCATS");
+            router.push("COOLCATS");
+        } else if (state == "BAYC") {
+            setState("BAYC");
+            router.push("BAYC");
+        }
     }
-
-    // function getCoolCatsImage(url) {
-    //   fetch(url)
-    //     .then(res => res.json())
-    //     .then(data => {
-    //       console.log(data.image);
-    //       setCatImage(data.image)
-    //     })
-    // }
 
     useEffect(() => {
 
         window.addEventListener('popstate', function (event) {
-            if (state == "PUDGY") {
+            if (state != "") {
                 setState("");
                 router.push("/")
             }
@@ -150,16 +191,63 @@ export function ListFloor() {
             };
         }
 
+        async function getCoolCatsInfo(url: string, setDataPrice: any) {
+            await getInfo(url, setDataPrice);
+
+            if (coolCatsPrice.length > 0) {
+                for (let i = 0; i < max_list; i++) {
+                    if (coolCatsPrice[i].id) {
+                        fetch("https://api.coolcatsnft.com/cat/" + coolCatsPrice[i].id)
+                            .then(res => res.json())
+                            .then(data => {
+                                // console.log(data.image);
+                                // console.log(coolCatsPrice[i].id);
+                                catImageURLs.push(data.image)
+                            })
+                    }
+                }
+            }
+        }
+
+        async function getBAYCInfo(url: string, setDataPrice: any) {
+            await getInfo(url, setDataPrice);
+
+            if (BAYCPrice.length > 0) {
+                for (let i = 0; i < max_list; i++) {
+                    if (BAYCPrice[i].id) {
+                        fetch("https://bafybeihpjhkeuiq3k6nqa3fkgeigeri7iebtrsuyuey5y6vy36n345xmbi.ipfs.dweb.link/" + BAYCPrice[i].id)
+                            .then(res => res.json())
+                            .then(data => {
+                                // console.log(data.image);
+                                // console.log(BAYCPrice[i].id);
+                                BAYCImageURLs.push(data.image)
+                            })
+                    }
+                }
+            }
+
+            // for (let i = 0; i < max_list; i++) {
+            //     fetch(BAYCImageURLs[i])
+            //         .then(res => res.json())
+            //         .then(data => {
+            //             console.log(data);
+            //         })
+            // }
+        }
+
         getETHPrice();
 
         setState(window.location.href.split('/')[3]);
 
+        getCoolCatsInfo(cool_cats_url, setCoolCatsPrice);
+        getBAYCInfo(BAYC_url, setBAYCPrice);
+
         getInfo(pudgy_url, setPudgyPrice);
         getInfo(KIA_url, setKIAPrice);
-        getInfo(cool_cats_url, setCoolCatsPrice);
         getInfo(sappy_seal_url, setSappySealPrice);
         getInfo(BAYC_url, setBAYCPrice);
         getInfo(MAYC_url, setMAYCprice);
+
     }, [state])
 
     return (
@@ -194,7 +282,7 @@ export function ListFloor() {
                             ))}
                         </FloorBox>
 
-                        <FloorBox onClick={() => setState("KIA")}>
+                        <FloorBox onClick={() => updateState("KIA")}>
                             <h2> KIA Floor Check </h2>
                             {KIAPrice.slice(1, 2).map((data, id) => (
                                 <h3 key={id}> Floor: ${getFloorPrice(data.price)} </h3>
@@ -206,7 +294,7 @@ export function ListFloor() {
                     </FloorRow>
 
                     <FloorRow>
-                        <FloorBox onClick={() => setState("COOLCATS")}>
+                        <FloorBox onClick={() => updateState("COOLCATS")}>
                             <h2> Cool Cats Floor Check </h2>
                             {coolCatsPrice.slice(0, 1).map((data, id) => (
                                 <h3 key={id} > Floor: ${getFloorPrice(data.price)} </h3>
@@ -216,7 +304,7 @@ export function ListFloor() {
                             ))}
                         </FloorBox>
 
-                        <FloorBox onClick={() => setState("SAPPY")}>
+                        <FloorBox onClick={() => updateState("SAPPY")}>
                             <h2> Sappy Seal Floor Check </h2>
                             {sappySealPrice.slice(0, 1).map((data, id) => (
                                 <h3 key={id} > Test: ${getFloorPrice(data.price)} </h3>
@@ -228,7 +316,7 @@ export function ListFloor() {
                     </FloorRow>
 
                     <FloorRow>
-                        <FloorBox onClick={() => setState("BAYC")}>
+                        <FloorBox onClick={() => updateState("BAYC")}>
                             <h2> BAYC Floor Check </h2>
                             {BAYCPrice.slice(0, 1).map((data, id) => (
                                 <h3 key={id}> Test: ${getFloorPrice(data.price)} </h3>
@@ -250,14 +338,17 @@ export function ListFloor() {
                     </FloorRow>
                 </>}
 
-                {state == "KIA" && <>
-                    {KIAPrice.slice(0, max_list).map((data) => (
-                        <>
-                            <h3> Price: {data.price} </h3>
-                            <img width="200px" height="200px" src={"https://koala-intelligence-agency.s3.us-east-2.amazonaws.com/koalas/" + data.id + ".png"} alt="" />
-                        </>
-                    ))}
-                </>}
+                <ImageBox>
+                    {state == "KIA" && <>
+                        {KIAPrice.slice(0, max_list).map((data) => (
+                            <>
+                                <h3> Price: {data.price} </h3>
+                                <img width="200px" height="200px" src={"https://koala-intelligence-agency.s3.us-east-2.amazonaws.com/koalas/" + data.id + ".png"} alt="" />
+                            </>
+                        ))}
+                    </>}
+                </ImageBox>
+
 
                 <ImageBox>
                     {state == "PUDGY" && <>
@@ -272,31 +363,49 @@ export function ListFloor() {
                     </>}
                 </ImageBox>
 
-                {state == "SAPPY" && <>
-                    {sappySealPrice.slice(0, max_list).map((data) => (
-                        <>
-                            <h3> Price: {data.price} </h3>
-                            <a href={"https://opensea.io/assets/" + data.id} >
-                                <img width="200px" height="200px" src={" https://bafybeida6b2f54lassxtg2subbm2n5uoltcg5kqvklalmrrfch7nxipiwi.ipfs.dweb.link/" + data.id + ".png"} alt="" />
-                            </a>
-                        </>
-                    ))}
-                </>}
+                <ImageBox>
+                    {state == "SAPPY" && <>
+                        {sappySealPrice.slice(0, max_list).map((data) => (
+                            <>
+                                <h3> Price: {data.price} </h3>
+                                <a href={"https://opensea.io/assets/0x364c828ee171616a39897688a831c2499ad972ec/" + data.id} >
+                                    <img width="200px" height="200px" src={" https://bafybeida6b2f54lassxtg2subbm2n5uoltcg5kqvklalmrrfch7nxipiwi.ipfs.dweb.link/" + data.id + ".png"} alt="" />
+                                </a>
+                            </>
+                        ))}
+                    </>}
+                </ImageBox>
 
-                {/* {state == "COOLCATS" && <>
-          {coolCatsPrice.slice(0, max_list).map((data) => (
-            <>
-              <h3> Price: {data.price} </h3>
-              <a href={"https://opensea.io/assets/0x364c828ee171616a39897688a831c2499ad972ec/" + data.id} >
+                <ImageBox>
+                    {state == "COOLCATS" && <>
+                        {coolCatsPrice.slice(0, max_list).map((data, key) => (
+                            <>
+                                <h3> Price: {data.price} </h3>
+                                <a href={"https://opensea.io/assets/0x1a92f7381b9f03921564a437210bb9396471050c/" + data.id} >
 
-                <p> {getCoolCatsImage("https://api.coolcatsnft.com/cat/" + data.id)} </p>
+                                    <img width="200px" height="200px" src={catImageURLs[key]} alt="" />
 
-                <img widht="200px" height="200px" src={catImage} alt="" />
+                                </a>
+                            </>
+                        ))}
+                    </>}
+                </ImageBox>
 
-              </a>
-            </>
-          ))}
-        </>} */}
+                <ImageBox>
+                    {state == "BAYC" && <>
+                        {BAYCPrice.slice(0, max_list).map((data, key) => (
+                            <>
+                                <h3> Price: {data.price} </h3>
+                                <a href={"https://opensea.io/assets/0x1a92f7381b9f03921564a437210bb9396471050c/" + data.id} >
+
+                                    <img width="200px" height="200px" src={"https://bafybeiasy6wuw4qtbnccjc62nwxfwsu3vd3gk3k3qmxcai45uygesio5hu.ipfs.dweb.link/"} alt="" />
+
+                                </a>
+                            </>
+                        ))}
+                    </>}
+                </ImageBox>
+
 
             </div>
         </>
