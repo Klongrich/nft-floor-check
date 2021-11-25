@@ -5,6 +5,7 @@ import MuiButton from "@material-ui/core/Button";
 import { styled } from "@material-ui/core/styles";
 import { spacing } from '@mui/system';
 import { useRouter } from 'next/router';
+import Image from "next/image";
 
 import FloorBox from "../components/FloorBox";
 
@@ -347,7 +348,10 @@ export function ListFloor() {
                         {KIAPrice.slice(0, max_list).map((data) => (
                             <>
                                 <h3> Price: {data.price} </h3>
-                                <img width="200px" height="200px" src={"https://koala-intelligence-agency.s3.us-east-2.amazonaws.com/koalas/" + data.id + ".png"} alt="" />
+                                <Image width={200}
+                                    height={200}
+                                    src={"https://koala-intelligence-agency.s3.us-east-2.amazonaws.com/koalas/" + data.id + ".png"}
+                                    alt="NFT Image" />
                             </>
                         ))}
                     </>}
@@ -360,7 +364,11 @@ export function ListFloor() {
                             <>
                                 <h3> Price: {data.price} </h3>
                                 <a href={"https://opensea.io/assets/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/" + data.id} >
-                                    <img width="200px" height="200px" src={"https://ipfs.io/ipfs/QmNf1UsmdGaMbpatQ6toXSkzDpizaGmC9zfunCyoz1enD5/penguin/" + data.id + ".png"} alt="" />
+                                    <Image width={200}
+                                        height={200}
+                                        src={"https://ipfs.io/ipfs/QmNf1UsmdGaMbpatQ6toXSkzDpizaGmC9zfunCyoz1enD5/penguin/" + data.id + ".png"}
+                                        alt=""
+                                    />
                                 </a>
                             </>
                         ))}
@@ -373,7 +381,11 @@ export function ListFloor() {
                             <>
                                 <h3> Price: {data.price} </h3>
                                 <a href={"https://opensea.io/assets/0x364c828ee171616a39897688a831c2499ad972ec/" + data.id} >
-                                    <img width="200px" height="200px" src={" https://bafybeida6b2f54lassxtg2subbm2n5uoltcg5kqvklalmrrfch7nxipiwi.ipfs.dweb.link/" + data.id + ".png"} alt="" />
+                                    <Image width={200}
+                                        height={200}
+                                        src={"https://bafybeida6b2f54lassxtg2subbm2n5uoltcg5kqvklalmrrfch7nxipiwi.ipfs.dweb.link/" + data.id + ".png"}
+                                        alt=""
+                                    />
                                 </a>
                             </>
                         ))}
