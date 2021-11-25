@@ -1,5 +1,5 @@
 {
-  "name": "nftscapersdream",
+  "name": "nft-floor-check",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -6,6 +6,10 @@ import { styled } from "@material-ui/core/styles";
 import { spacing } from '@mui/system';
 import { useRouter } from 'next/router';
 
+import FloorBox from "../components/FloorBox";
+
+import GetETHprice from "../utils/getETHprice";
+
 const Button = styled(MuiButton)(spacing);
 
 const pudgy_url = "/prices/penguins";
@@ -73,26 +77,26 @@ const FloorRow = Styled.div`
   display: inline-block;
 `
 
-const FloorBox = Styled.div`
-    text-align: center;
-    background-color: #fcf7f7;
-    border-radius: 15px;
-  
-    margin-top: 40px;
-    margin-right: 30px;
+// const FloorBox = Styled.div`
+//     text-align: center;
+//     background-color: #fcf7f7;
+//     border-radius: 15px;
 
-    padding-top: 1px;
-    padding-bottom: 10px;
-  
-    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+//     margin-top: 40px;
+//     margin-right: 30px;
 
-    p {
-        font-size: 16px;
-    
-        padding-top: 2px;
-        padding-bottom: 2px;
-    }
-`
+//     padding-top: 1px;
+//     padding-bottom: 10px;
+
+//     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+
+//     p {
+//         font-size: 16px;
+
+//         padding-top: 2px;
+//         padding-bottom: 2px;
+//     }
+// `
 
 const ImageBox = Styled.div`
     text-align: center;
@@ -103,7 +107,7 @@ const BAYCImageURLs: string[] = [];
 
 export function ListFloor() {
 
-    const [ethPrice, setETHprice] = useState(0.00);
+    // const [ethPrice, setETHprice] = useState(0.00);
 
     const [BAYCPrice, setBAYCPrice] = useState(place_holder);
     const [MAYCPrice, setMAYCprice] = useState(place_holder);
@@ -115,19 +119,21 @@ export function ListFloor() {
 
     const [state, setState] = useState("home");
 
+    const price = GetETHprice();
+
     const router = useRouter()
 
-    function getFloorPrice(floor_value: any) {
-        return ((floor_value * ethPrice).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-    }
+    // function getFloorPrice(floor_value: any) {
+    //     return ((floor_value * ethPrice).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    // }
 
-    async function getETHPrice() {
-        fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd")
-            .then(res => res.json())
-            .then(data => {
-                setETHprice(data.ethereum.usd);
-            })
-    }
+    // async function getETHPrice() {
+    //     fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd")
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             setETHprice(data.ethereum.usd);
+    //         })
+    // }
 
     function updateState(state: string) {
         if (state == "PUDGY") {
@@ -236,8 +242,6 @@ export function ListFloor() {
             // }
         }
 
-        getETHPrice();
-
         setState(window.location.href.split('/')[3]);
 
         getCoolCatsInfo(cool_cats_url, setCoolCatsPrice);
@@ -256,7 +260,8 @@ export function ListFloor() {
             <div>
                 <NavBar>
                     <h1> NFT Floor Check</h1>
-                    <p> ETH Price : ${ethPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </p>
+
+                    <p> ETH Price : ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </p>
 
                     <Button onClick={() => setState("")} style={{ minWidth: '142px' }} mr={3} size="large" variant="outlined"> ETH </Button>
                     <Button style={{ minWidth: '142px' }} mr={5} size="large" variant="outlined"> MATIC </Button>
@@ -273,70 +278,68 @@ export function ListFloor() {
 
                 {state == "" && <>
                     <FloorRow>
-                        <FloorBox onClick={() => updateState("PUDGY")}>
-                            <h2> Pudgy Floor Check </h2>
-                            {pudgyPrice.slice(0, 1).map((data, id) => (
-                                <h3 key={id}> Floor: ${getFloorPrice(data.price)} </h3>
-                            ))}
-                            {pudgyPrice.slice(0, max_list).map((data, id) => (
-                                <p key={id} > ID : <a href={"https://opensea.io/assets/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/" + data.id} > #{data.id} </a> -- Price : {data.price} </p>
-                            ))}
-                        </FloorBox>
+                        <div onClick={() => updateState("PUDGY")}>
+                            <FloorBox Collection="Pudgy"
+                                NFTmeta={pudgyPrice}
+                                max_list={8}
+                                opensea_url="https://opensea.io/assets/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/"
+                                ethPrice={price}
+                            />
+                        </div>
 
-                        <FloorBox onClick={() => updateState("KIA")}>
-                            <h2> KIA Floor Check </h2>
-                            {KIAPrice.slice(1, 2).map((data, id) => (
-                                <h3 key={id}> Floor: ${getFloorPrice(data.price)} </h3>
-                            ))}
-                            {KIAPrice.slice(0, max_list).map((data, id) => (
-                                <p key={id} > ID: <a href={"https://opensea.io/assets/0x3f5fb35468e9834a43dca1c160c69eaae78b6360/" + data.id}> #{data.id} </a> -- Price : {data.price}</p>
-                            ))}
-                        </FloorBox>
+                        <div onClick={() => updateState("KIA")}>
+                            <FloorBox Collection="KIA"
+                                NFTmeta={KIAPrice}
+                                max_list={8}
+                                opensea_url="https://opensea.io/assets/0x3f5fb35468e9834a43dca1c160c69eaae78b6360/"
+                                ethPrice={price}
+                            />
+                        </div>
+
                     </FloorRow>
 
                     <FloorRow>
-                        <FloorBox onClick={() => updateState("COOLCATS")}>
-                            <h2> Cool Cats Floor Check </h2>
-                            {coolCatsPrice.slice(0, 1).map((data, id) => (
-                                <h3 key={id} > Floor: ${getFloorPrice(data.price)} </h3>
-                            ))}
-                            {coolCatsPrice.slice(0, max_list).map((data, id) => (
-                                <p key={id} > ID:  <a href={"https://opensea.io/assets/0x1a92f7381b9f03921564a437210bb9396471050c/" + data.id}> #{data.id} </a> -- Price : {data.price}</p>
-                            ))}
-                        </FloorBox>
+                        <div onClick={() => updateState("COOLCATS")}>
+                            <FloorBox Collection="COOLCATS"
+                                NFTmeta={coolCatsPrice}
+                                max_list={8}
+                                opensea_url="https://opensea.io/assets/0x1a92f7381b9f03921564a437210bb9396471050c/"
+                                ethPrice={price}
+                            />
+                        </div>
 
-                        <FloorBox onClick={() => updateState("SAPPY")}>
-                            <h2> Sappy Seal Floor Check </h2>
-                            {sappySealPrice.slice(0, 1).map((data, id) => (
-                                <h3 key={id} > Test: ${getFloorPrice(data.price)} </h3>
-                            ))}
-                            {sappySealPrice.slice(0, max_list).map((data, id) => (
-                                <p key={id} > ID:  <a href={"https://opensea.io/assets/0x364c828ee171616a39897688a831c2499ad972ec/" + data.id} > #{data.id} </a> -- Price : {data.price}</p>
-                            ))}
-                        </FloorBox>
+                        <div onClick={() => updateState("SAPPY")}>
+                            <FloorBox Collection="SAPPY"
+                                NFTmeta={sappySealPrice}
+                                max_list={8}
+                                opensea_url="https://opensea.io/assets/0x364c828ee171616a39897688a831c2499ad972ec/"
+                                ethPrice={price}
+                            />
+                        </div>
                     </FloorRow>
 
                     <FloorRow>
-                        <FloorBox onClick={() => updateState("BAYC")}>
-                            <h2> BAYC Floor Check </h2>
-                            {BAYCPrice.slice(0, 1).map((data, id) => (
-                                <h3 key={id}> Test: ${getFloorPrice(data.price)} </h3>
-                            ))}
-                            {BAYCPrice.slice(0, max_list).map((data, id) => (
-                                <p key={id}> ID: <a href={"https://opensea.io/assets/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/" + data.id} > #{data.id} </a> -- Price : {data.price}</p>
-                            ))}
-                        </FloorBox>
 
-                        <FloorBox>
-                            <h2> MAYC Floor Check </h2>
-                            {MAYCPrice.slice(0, 1).map((data, id) => (
-                                <h3 key={id} > Test: ${getFloorPrice(data.price)} </h3>
-                            ))}
-                            {MAYCPrice.slice(0, max_list).map((data, id) => (
-                                <p key={id} > ID: <a href={"https://opensea.io/assets/0x60e4d786628fea6478f785a6d7e704777c86a7c6/" + data.id} > #{data.id} </a> -- Price : {data.price}</p>
-                            ))}
-                        </FloorBox>
+                        <div onClick={() => updateState("BAYC")}>
+                            <FloorBox Collection="BAYC"
+                                NFTmeta={BAYCPrice}
+                                max_list={8}
+                                opensea_url="https://opensea.io/assets/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/"
+                                ethPrice={price}
+                            />
+                        </div>
+
+                        <div onClick={() => updateState("MAYC")}>
+                            <FloorBox Collection="MAYC"
+                                NFTmeta={MAYCPrice}
+                                max_list={8}
+                                opensea_url="https://opensea.io/assets/0x60e4d786628fea6478f785a6d7e704777c86a7c6/"
+                                ethPrice={price}
+                            />
+                        </div>
+
                     </FloorRow>
+
                 </>}
 
                 <ImageBox>
