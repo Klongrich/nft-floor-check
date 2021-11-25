@@ -78,27 +78,6 @@ const FloorRow = Styled.div`
   display: inline-block;
 `
 
-// const FloorBox = Styled.div`
-//     text-align: center;
-//     background-color: #fcf7f7;
-//     border-radius: 15px;
-
-//     margin-top: 40px;
-//     margin-right: 30px;
-
-//     padding-top: 1px;
-//     padding-bottom: 10px;
-
-//     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-
-//     p {
-//         font-size: 16px;
-
-//         padding-top: 2px;
-//         padding-bottom: 2px;
-//     }
-// `
-
 const ImageBox = Styled.div`
     text-align: center;
 `
@@ -121,20 +100,7 @@ export function ListFloor() {
     const [state, setState] = useState("home");
 
     const price = GetETHprice();
-
     const router = useRouter()
-
-    // function getFloorPrice(floor_value: any) {
-    //     return ((floor_value * ethPrice).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-    // }
-
-    // async function getETHPrice() {
-    //     fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd")
-    //         .then(res => res.json())
-    //         .then(data => {
-    //             setETHprice(data.ethereum.usd);
-    //         })
-    // }
 
     function updateState(state: string) {
         if (state == "PUDGY") {
@@ -161,8 +127,8 @@ export function ListFloor() {
     useEffect(() => {
 
         window.addEventListener('popstate', function (event) {
-            if (state != "") {
-                setState("");
+            if (state != "home") {
+                setState("home");
                 router.push("/")
             }
         }, false);
@@ -243,7 +209,9 @@ export function ListFloor() {
             // }
         }
 
-        setState(window.location.href.split('/')[3]);
+        if (window.location.href.split('/')[3] != "") {
+            setState(window.location.href.split('/')[3]);
+        }
 
         getCoolCatsInfo(cool_cats_url, setCoolCatsPrice);
         getBAYCInfo(BAYC_url, setBAYCPrice);
@@ -264,7 +232,7 @@ export function ListFloor() {
 
                     <p> ETH Price : ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </p>
 
-                    <Button onClick={() => setState("")} style={{ minWidth: '142px' }} mr={3} size="large" variant="outlined"> ETH </Button>
+                    <Button style={{ minWidth: '142px' }} mr={3} size="large" variant="outlined"> ETH </Button>
                     <Button style={{ minWidth: '142px' }} mr={5} size="large" variant="outlined"> MATIC </Button>
 
                     <Button style={{ minWidth: '142px' }} mr={3} mt={2} size="large" variant="outlined"> SOL </Button>
@@ -277,7 +245,7 @@ export function ListFloor() {
                     </>} */}
                 </NavBar>
 
-                {state == "" && <>
+                {state == "home" && <>
                     <FloorRow>
                         <div onClick={() => updateState("PUDGY")}>
                             <FloorBox Collection="Pudgy"
