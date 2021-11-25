@@ -10,6 +10,7 @@ import Image from "next/image";
 import FloorBox from "../components/FloorBox";
 
 import GetETHprice from "../utils/getETHprice";
+import GetNftInfo from "../utils/getNftInfo";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -102,7 +103,22 @@ export function ListFloor() {
     const price = GetETHprice();
     const router = useRouter()
 
-    function updateState(state: string) {
+    async function getCoolCatsImages() {
+        if (coolCatsPrice.length > 0) {
+            for (let i = 0; i < max_list; i++) {
+                if (coolCatsPrice[i].id) {
+                    console.log(coolCatsPrice[i].id);
+                    fetch("https://api.coolcatsnft.com/cat/" + coolCatsPrice[i].id)
+                        .then(res => res.json())
+                        .then(data => {
+                            catImageURLs.push(data.image)
+                        })
+                }
+            }
+        }
+    }
+
+    async function updateState(state: string) {
         if (state == "PUDGY") {
             setState("PUDGY")
             router.push('/PUDGY');
@@ -116,6 +132,7 @@ export function ListFloor() {
             router.push("SAPPY");
         }
         else if (state == "COOLCATS") {
+            await getCoolCatsImages();
             setState("COOLCATS");
             router.push("COOLCATS");
         } else if (state == "BAYC") {
@@ -127,64 +144,15 @@ export function ListFloor() {
     useEffect(() => {
 
         window.addEventListener('popstate', function (event) {
+            console.log("window event")
             if (state != "home") {
                 setState("home");
                 router.push("/")
             }
         }, false);
 
-        async function getInfo(url: string, setDataPrice: any) {
-            try {
-                fetch(url)
-                    .then(res => res.json())
-                    .then(rawdata => {
-
-                        var price_data = [];
-
-                        for (var i = 1; i < 10000; i++) {
-                            var number = i.toString();
-
-                            if (rawdata.prices[number]) {
-
-                                var data_id = number;
-                                var data_price = rawdata.prices[number][1];
-
-                                var new_object = {
-                                    id: data_id,
-                                    price: data_price
-                                };
-
-                                price_data.push(new_object);
-                            }
-                        }
-                        setDataPrice(price_data);
-                        setDataPrice([...price_data].sort((b, a) => b.price - a.price));
-                    });
-            } catch (err) {
-                console.log(err);
-            };
-        }
-
-        async function getCoolCatsInfo(url: string, setDataPrice: any) {
-            await getInfo(url, setDataPrice);
-
-            if (coolCatsPrice.length > 0) {
-                for (let i = 0; i < max_list; i++) {
-                    if (coolCatsPrice[i].id) {
-                        fetch("https://api.coolcatsnft.com/cat/" + coolCatsPrice[i].id)
-                            .then(res => res.json())
-                            .then(data => {
-                                // console.log(data.image);
-                                // console.log(coolCatsPrice[i].id);
-                                catImageURLs.push(data.image)
-                            })
-                    }
-                }
-            }
-        }
-
         async function getBAYCInfo(url: string, setDataPrice: any) {
-            await getInfo(url, setDataPrice);
+            await GetNftInfo(url, setDataPrice);
 
             if (BAYCPrice.length > 0) {
                 for (let i = 0; i < max_list; i++) {
@@ -192,8 +160,6 @@ export function ListFloor() {
                         fetch("https://bafybeihpjhkeuiq3k6nqa3fkgeigeri7iebtrsuyuey5y6vy36n345xmbi.ipfs.dweb.link/" + BAYCPrice[i].id)
                             .then(res => res.json())
                             .then(data => {
-                                // console.log(data.image);
-                                // console.log(BAYCPrice[i].id);
                                 BAYCImageURLs.push(data.image)
                             })
                     }
@@ -213,14 +179,16 @@ export function ListFloor() {
             setState(window.location.href.split('/')[3]);
         }
 
-        getCoolCatsInfo(cool_cats_url, setCoolCatsPrice);
+
+        GetNftInfo(cool_cats_url, setCoolCatsPrice);
+
         getBAYCInfo(BAYC_url, setBAYCPrice);
 
-        getInfo(pudgy_url, setPudgyPrice);
-        getInfo(KIA_url, setKIAPrice);
-        getInfo(sappy_seal_url, setSappySealPrice);
-        getInfo(BAYC_url, setBAYCPrice);
-        getInfo(MAYC_url, setMAYCprice);
+        GetNftInfo(pudgy_url, setPudgyPrice);
+        GetNftInfo(KIA_url, setKIAPrice);
+        GetNftInfo(sappy_seal_url, setSappySealPrice);
+        GetNftInfo(BAYC_url, setBAYCPrice);
+        GetNftInfo(MAYC_url, setMAYCprice);
 
     }, [state])
 
