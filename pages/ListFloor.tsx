@@ -287,7 +287,7 @@ export function ListFloor() {
 
                 <ImageBox>
                     {state == "KIA" && <>
-                        {KIAPrice.slice(0, max_list).map((data) => (
+                        {KIAPrice.slice(1, max_list + 1).map((data) => (
                             <>
                                 <h3> Price: {data.price} </h3>
                                 <Image width={200}
@@ -302,7 +302,7 @@ export function ListFloor() {
 
                 <ImageBox>
                     {state == "PUDGY" && <>
-                        {pudgyPrice.slice(0, max_list).map((data) => (
+                        {pudgyPrice.slice(1, max_list + 1).map((data) => (
                             <>
                                 <h3> Price: {data.price} </h3>
                                 <a href={"https://opensea.io/assets/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/" + data.id} >
@@ -336,7 +336,7 @@ export function ListFloor() {
 
                 <ImageBox>
                     {state == "COOLCATS" && <>
-                        {coolCatsPrice.slice(0, max_list).map((data, key) => (
+                        {coolCatsPrice.slice(1, max_list + 1).map((data, key) => (
                             <>
                                 <h3> Price: {data.price} </h3>
                                 <a href={"https://opensea.io/assets/0x1a92f7381b9f03921564a437210bb9396471050c/" + data.id} >
