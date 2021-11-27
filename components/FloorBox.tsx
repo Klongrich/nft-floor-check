@@ -8,12 +8,14 @@ interface nftMeta {
     price: number;
 }
 
+//Hot Fix
 interface FloorBoxData {
     Collection: string;
     NFTmeta: nftMeta[];
     max_list: number;
     opensea_url: string;
     ethPrice: number;
+    start: number;
 }
 
 const Container = styled.div`
@@ -44,10 +46,10 @@ export default function FloorBox(
         <>
             <Container>
                 <h2> {Data.Collection} Floor Check </h2>
-                {Data.NFTmeta.slice(0, 1).map((data, id) => (
+                {Data.NFTmeta.slice(Data.start, Data.start + 1).map((data, id) => (
                     <h3 key={id}> Floor: ${getFloorPrice(data.price, Data.ethPrice)} </h3>
                 ))}
-                {Data.NFTmeta.slice(0, Data.max_list).map((data, id) => (
+                {Data.NFTmeta.slice(Data.start, Data.max_list + Data.start).map((data, id) => (
                     <p key={id} > ID : <a href={Data.opensea_url + data.id} > #{data.id} </a> -- Price : {data.price} </p>
                 ))}
             </Container>
