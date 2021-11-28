@@ -5,12 +5,22 @@ import MuiButton from "@material-ui/core/Button";
 import { styled } from "@material-ui/core/styles";
 import { spacing } from '@mui/system';
 import { useRouter } from 'next/router';
+
 import Image from "next/image";
 
-import FloorBox from "../components/FloorBox";
+import ENSlogo from "../static/icons/ensLogo.jpeg";
+import UNIlogo from "../static/icons/UniswapLogo.png";
+import GTClogo from "../static/icons/GitCoinLogo.png";
 
-import GetETHprice from "../utils/getETHprice";
+import FloorBox from "../components/FloorBox";
+import CoinPriceBox from "../components/CoinPriceBox";
+
 import GetNftInfo from "../utils/getNftInfo";
+
+import GetGTCprice from "../utils/CoinPrices/getGTCprice";
+import GetETHprice from "../utils/CoinPrices/getETHprice";
+import GetENSprice from "../utils/CoinPrices/getENSprice";
+import GetUNIprice from "../utils/CoinPrices/getUNIprice";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -83,12 +93,11 @@ const ImageBox = Styled.div`
     text-align: center;
 `
 
+
 const catImageURLs: string[] = [];
 const BAYCImageURLs: string[] = [];
 
 export function ListFloor() {
-
-    // const [ethPrice, setETHprice] = useState(0.00);
 
     const [BAYCPrice, setBAYCPrice] = useState(place_holder);
     const [MAYCPrice, setMAYCprice] = useState(place_holder);
@@ -101,6 +110,15 @@ export function ListFloor() {
     const [state, setState] = useState("home");
 
     const price = GetETHprice();
+    const gtc_price = GetGTCprice();
+    const uni_price = GetUNIprice();
+
+    const ens_price = GetENSprice();
+
+    const gtcCirculatingSupply = 14198201.73
+    const uniCirculatingSupply = 627857378.77
+    const ensCirculatingSupply = 20244862.09
+
     const router = useRouter()
 
     async function getCoolCatsImages() {
@@ -119,25 +137,32 @@ export function ListFloor() {
     }
 
     async function updateState(state: string) {
+        const window_height = 860;
+
         if (state == "PUDGY") {
             setState("PUDGY")
-            router.push('/PUDGY');
+            await router.push('/PUDGY');
+            window.scrollTo(0, window_height);
         }
         else if (state == "KIA") {
             setState("KIA");
-            router.push("/KIA");
+            await router.push("/KIA");
+            window.scrollTo(0, window_height);
         }
         else if (state == "SAPPY") {
             setState("SAPPY");
-            router.push("SAPPY");
+            await router.push("SAPPY");
+            window.scrollTo(0, window_height);
         }
         else if (state == "COOLCATS") {
             await getCoolCatsImages();
             setState("COOLCATS");
-            router.push("COOLCATS");
+            await router.push("COOLCATS");
+            window.scrollTo(0, window_height);
         } else if (state == "BAYC") {
             setState("BAYC");
-            router.push("BAYC");
+            await router.push("BAYC");
+            window.scrollTo(0, window_height);
         }
     }
 
@@ -181,7 +206,6 @@ export function ListFloor() {
 
 
         GetNftInfo(cool_cats_url, setCoolCatsPrice);
-
         getBAYCInfo(BAYC_url, setBAYCPrice);
 
         GetNftInfo(pudgy_url, setPudgyPrice);
@@ -195,9 +219,38 @@ export function ListFloor() {
     return (
         <>
             <div>
+
+                <h1> DAO Price Check </h1>
+                <CoinPriceBox
+                    name={"GTC"}
+                    price={gtc_price.toString()}
+                    marketCap={(gtc_price * gtcCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    Icon={GTClogo}
+                    chart_url={"https://coinmarketcap.com/currencies/gitcoin/"}
+                />
+
+                <CoinPriceBox
+                    name={"UNI"}
+                    price={uni_price.toString()}
+                    marketCap={(uni_price * uniCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    Icon={UNIlogo}
+                    chart_url={"https://coinmarketcap.com/currencies/uniswap/"}
+                />
+
+                <CoinPriceBox
+                    name={"ENS"}
+                    price={ens_price.toString()}
+                    marketCap={(ens_price * ensCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    Icon={ENSlogo}
+                    chart_url={"https://coinmarketcap.com/currencies/ethereum-name-service/"}
+                />
+
+                <br />
+                <br />
+                <br />
+
                 <NavBar>
                     <h1> NFT Floor Check</h1>
-
                     <p> ETH Price : ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </p>
 
                     <Button style={{ minWidth: '142px' }} mr={3} size="large" variant="outlined"> ETH </Button>
