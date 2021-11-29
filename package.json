@@ -11,14 +11,21 @@
     "@babel/core": "^7.16.0",
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
+    "@ensdomains/ens": "ensdomains/ens",
+    "@ensdomains/ensjs": "^2.0.1",
     "@material-ui/core": "^4.12.3",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@mui/system": "^5.2.0",
+    "@walletconnect/web3-provider": "^1.6.6",
+    "@web3-react/core": "^6.1.9",
     "next": "^12.0.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-is": "^17.0.2",
     "sharp": "^0.29.3",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "web3": "^1.6.1",
+    "web3modal": "^1.9.4"
   },
   "devDependencies": {
     "@types/node": "16.11.9",

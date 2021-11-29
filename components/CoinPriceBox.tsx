@@ -60,7 +60,9 @@ export default function CoinPrice(
                     />
                     <p> Price : ${Data.price}</p>
                     <p> MarketCap : ${Data.marketCap}</p>
+                    {/* <h2> Total: ${(parseFloat(Data.price) * Data.coins).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </h2> */}
                 </Container>
+
             </a>
         </>
     );

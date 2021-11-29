@@ -4,6 +4,9 @@ import Styled from "styled-components";
 import MuiButton from "@material-ui/core/Button";
 import { styled } from "@material-ui/core/styles";
 import { spacing } from '@mui/system';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { TextField } from '@material-ui/core';
+
 import { useRouter } from 'next/router';
 
 import Image from "next/image";
@@ -22,6 +25,14 @@ import GetETHprice from "../utils/CoinPrices/getETHprice";
 import GetENSprice from "../utils/CoinPrices/getENSprice";
 import GetUNIprice from "../utils/CoinPrices/getUNIprice";
 
+import Web3 from 'web3';
+import Web3Modal from 'web3modal';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+
+import tokenAddresses from "../static/tokens/tokenContracts";
+
+import ENS, { getEnsAddress } from '@ensdomains/ensjs';
+
 const Button = styled(MuiButton)(spacing);
 
 const pudgy_url = "/prices/penguins";
@@ -31,8 +42,16 @@ const sappy_seal_url = "/prices/seals";
 const BAYC_url = "/prices/bayc";
 const MAYC_url = "/prices/mayc";
 
-// var ipfsAPI = require('ipfs-api');
-// const ipfs = ipfsAPI('ipfs.infura.io', '5001', { protocol: 'https' })
+const API_KEY = "SGJRWYUZK9QJH2UUQ96JKTZAY4RAPIB5PK";
+
+const providerOptions = {
+    walletconnect: {
+        package: WalletConnectProvider, // required
+        options: {
+            infuraId: '43b86485d3164682b5d703fd1d39fe1c', // required
+        },
+    },
+};
 
 const place_holder = [
     {
@@ -93,11 +112,41 @@ const ImageBox = Styled.div`
     text-align: center;
 `
 
-
 const catImageURLs: string[] = [];
 const BAYCImageURLs: string[] = [];
 
+// The minimum ABI to get ERC20 Token balance
+const ERC_20_ABI = [
+    // balanceOf
+    {
+        "constant": true,
+        "inputs": [{ "name": "_owner", "type": "address" }],
+        "name": "balanceOf",
+        "outputs": [{ "name": "balance", "type": "uint256" }],
+        "type": "function"
+    },
+    // decimals
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [{ "name": "", "type": "uint8" }],
+        "type": "function"
+    }
+];
+
+const tokenMeta = [
+    {
+        name: "test",
+        amount: "888"
+    }
+]
+
+
 export function ListFloor() {
+
+    const [open, setOpen] = useState(false);
+    const [inputValue, setInputValue] = useState("");
 
     const [BAYCPrice, setBAYCPrice] = useState(place_holder);
     const [MAYCPrice, setMAYCprice] = useState(place_holder);
@@ -107,19 +156,26 @@ export function ListFloor() {
     const [KIAPrice, setKIAPrice] = useState(place_holder);
     const [sappySealPrice, setSappySealPrice] = useState(place_holder);
 
+    const [web3, setWeb3] = useState('');
+    const [provider, setProvider] = useState('');
+    const [userAddress, setUserAddress] = useState('');
+    const [searchedAddress, setSearchedAddress] = useState('');
+
+    const [erc20Tokens, setErc20Tokens] = useState(tokenMeta);
+
     const [state, setState] = useState("home");
+
 
     const price = GetETHprice();
     const gtc_price = GetGTCprice();
     const uni_price = GetUNIprice();
-
     const ens_price = GetENSprice();
 
     const gtcCirculatingSupply = 14198201.73
     const uniCirculatingSupply = 627857378.77
     const ensCirculatingSupply = 20244862.09
 
-    const router = useRouter()
+    const router = useRouter();
 
     async function getCoolCatsImages() {
         if (coolCatsPrice.length > 0) {
@@ -135,6 +191,7 @@ export function ListFloor() {
             }
         }
     }
+
 
     async function updateState(state: string) {
         const window_height = 860;
@@ -166,7 +223,57 @@ export function ListFloor() {
         }
     }
 
+    async function getERC20tokens(publicKey: string) {
+        const web3 = await new Web3(provider);
+
+        for (let i = 0; i < tokenAddresses.length; i++) {
+            const contract = new web3.eth.Contract(ERC_20_ABI, tokenAddresses[i].contract);
+            var tokenBalance = await contract.methods.balanceOf(publicKey).call();
+            var total = web3.utils.fromWei(tokenBalance, 'ether');
+
+            // setErc20Tokens(erc20Tokens => [...erc20Tokens, {
+            //     name: tokenAddresses[i].name,
+            //     amount: total
+            // }])
+
+            console.log(tokenAddresses[i].name + " : " + total);
+        }
+
+    }
+
+    //Move to "Resovle ETH function in utils" a.k.a raise money and hire someone .... 
+    async function searchAddress(inputAddress: string) {
+        //Check if input address ends in .eth or .crypto also if it's a valid address
+        const ens = new ENS({ provider, ensAddress: getEnsAddress('1') })
+        var address = await ens.name(inputAddress).getAddress() // 0x123
+        setSearchedAddress(address);
+
+        await getERC20tokens(address);
+
+        console.log(address);
+    }
+
     useEffect(() => {
+
+        const web3Modal = new Web3Modal({
+            cacheProvider: false, // optional
+            providerOptions, // required
+        });
+
+        //Move to wrapper to use across scope of applaction
+        async function loadWeb3() {
+            const provider = await web3Modal.connect();
+            const web3 = await new Web3(provider);
+
+            setProvider(provider);
+
+            if (web3) {
+                const EthAccounts = await web3.eth.getAccounts();
+                setUserAddress(EthAccounts[0]);
+            } else {
+                console.log('web3 not found');
+            }
+        }
 
         window.addEventListener('popstate', function (event) {
             console.log("window event")
@@ -190,20 +297,11 @@ export function ListFloor() {
                     }
                 }
             }
-
-            // for (let i = 0; i < max_list; i++) {
-            //     fetch(BAYCImageURLs[i])
-            //         .then(res => res.json())
-            //         .then(data => {
-            //             console.log(data);
-            //         })
-            // }
         }
 
         if (window.location.href.split('/')[3] != "") {
             setState(window.location.href.split('/')[3]);
         }
-
 
         GetNftInfo(cool_cats_url, setCoolCatsPrice);
         getBAYCInfo(BAYC_url, setBAYCPrice);
@@ -214,13 +312,48 @@ export function ListFloor() {
         GetNftInfo(BAYC_url, setBAYCPrice);
         GetNftInfo(MAYC_url, setMAYCprice);
 
+        loadWeb3();
+
     }, [state])
 
     return (
         <>
             <div>
 
-                <h1> DAO Price Check </h1>
+                <h1> DAO price check </h1>
+
+                <Autocomplete
+                    options={[]}
+                    open={open}
+                    onOpen={() => {
+                        console.log("Open");
+                    }}
+                    inputValue={inputValue}
+                    onInputChange={(e: any, value: any) => {
+                        setInputValue(value);
+                    }}
+                    onChange={(e: any, value: any) => {
+                        console.log("Do Something");
+                        //Check_Collection_Input(value);
+                    }}
+                    // options={TopCollections}
+                    renderInput={(params: any) => (
+                        <TextField {...params}
+                            label="Search ETH address"
+                            variant="outlined"
+                            onKeyDown={e => {
+                                console.log(e.code);
+                                if (e.code == "Enter") {
+                                    searchAddress(inputValue);
+                                    setOpen(false);
+                                }
+                            }}
+                        />
+                    )}
+                />
+
+                <h2>{searchedAddress} </h2>
+
                 <CoinPriceBox
                     name={"GTC"}
                     price={gtc_price.toString()}
