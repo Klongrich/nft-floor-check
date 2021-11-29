@@ -31,6 +31,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 
 import tokenAddresses from "../static/tokens/tokenContracts";
 
+// @ts-ignore
 import ENS, { getEnsAddress } from '@ensdomains/ensjs';
 
 const Button = styled(MuiButton)(spacing);
@@ -137,11 +138,18 @@ const ERC_20_ABI = [
 
 const tokenMeta = [
     {
-        name: "test",
-        amount: "888"
+        name: "0",
+        balance: "0"
+    },
+    {
+        name: "0",
+        balance: "0"
+    },
+    {
+        name: "0",
+        balance: "0"
     }
 ]
-
 
 export function ListFloor() {
 
@@ -161,10 +169,14 @@ export function ListFloor() {
     const [userAddress, setUserAddress] = useState('');
     const [searchedAddress, setSearchedAddress] = useState('');
 
-    const [erc20Tokens, setErc20Tokens] = useState(tokenMeta);
+    const [userEthAmount, setUserEthAmount] = useState('');
+    const [userEthToUSD, setUserEthToUSD] = useState('');
+
+    const [gtcAmount, setGtcAmount] = useState('0.00');
+    const [uniAmount, setUniAmount] = useState('0.00');
+    const [ensAmount, setEnsAmount] = useState('0.00');
 
     const [state, setState] = useState("home");
-
 
     const price = GetETHprice();
     const gtc_price = GetGTCprice();
@@ -181,7 +193,7 @@ export function ListFloor() {
         if (coolCatsPrice.length > 0) {
             for (let i = 0; i < max_list; i++) {
                 if (coolCatsPrice[i].id) {
-                    console.log(coolCatsPrice[i].id);
+                    // console.log(coolCatsPrice[i].id);
                     fetch("https://api.coolcatsnft.com/cat/" + coolCatsPrice[i].id)
                         .then(res => res.json())
                         .then(data => {
@@ -191,7 +203,6 @@ export function ListFloor() {
             }
         }
     }
-
 
     async function updateState(state: string) {
         const window_height = 860;
@@ -223,34 +234,46 @@ export function ListFloor() {
         }
     }
 
-    async function getERC20tokens(publicKey: string) {
-        const web3 = await new Web3(provider);
+    async function getERC20tokens(publicKey: string, web3: any) {
 
         for (let i = 0; i < tokenAddresses.length; i++) {
+            // @ts-ignore
             const contract = new web3.eth.Contract(ERC_20_ABI, tokenAddresses[i].contract);
             var tokenBalance = await contract.methods.balanceOf(publicKey).call();
             var total = web3.utils.fromWei(tokenBalance, 'ether');
 
-            // setErc20Tokens(erc20Tokens => [...erc20Tokens, {
-            //     name: tokenAddresses[i].name,
-            //     amount: total
-            // }])
+            // console.log(tokenAddresses[i].name + " : " + total);
 
-            console.log(tokenAddresses[i].name + " : " + total);
+            var object = {
+                name: tokenAddresses[i].name,
+                balance: total
+            }
+            tokenMeta[i] = object;
         }
 
+        setEnsAmount(tokenMeta[0].balance);
+        setGtcAmount(tokenMeta[1].balance);
+        setUniAmount(tokenMeta[2].balance);
     }
 
     //Move to "Resovle ETH function in utils" a.k.a raise money and hire someone .... 
     async function searchAddress(inputAddress: string) {
+        const web3 = await new Web3(provider);
         //Check if input address ends in .eth or .crypto also if it's a valid address
         const ens = new ENS({ provider, ensAddress: getEnsAddress('1') })
         var address = await ens.name(inputAddress).getAddress() // 0x123
+
+        const initAmount = await web3.eth.getBalance(address)
+        const ethAmount = web3.utils.fromWei(initAmount, 'ether');
+
+        setUserEthAmount(ethAmount);
+        setUserEthToUSD('$' + (parseFloat(ethAmount) * price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         setSearchedAddress(address);
 
-        await getERC20tokens(address);
+        await getERC20tokens(address, web3);
+        // await getERC721tokens(address, web3);
 
-        console.log(address);
+        // console.log(address);
     }
 
     useEffect(() => {
@@ -276,7 +299,6 @@ export function ListFloor() {
         }
 
         window.addEventListener('popstate', function (event) {
-            console.log("window event")
             if (state != "home") {
                 setState("home");
                 router.push("/")
@@ -333,8 +355,8 @@ export function ListFloor() {
                         setInputValue(value);
                     }}
                     onChange={(e: any, value: any) => {
-                        console.log("Do Something");
-                        //Check_Collection_Input(value);
+                        // console.log("Do Something");
+                        // Check_Collection_Input(value);
                     }}
                     // options={TopCollections}
                     renderInput={(params: any) => (
@@ -342,17 +364,18 @@ export function ListFloor() {
                             label="Search ETH address"
                             variant="outlined"
                             onKeyDown={e => {
-                                console.log(e.code);
+                                // console.log(e.code);
                                 if (e.code == "Enter") {
                                     searchAddress(inputValue);
-                                    setOpen(false);
                                 }
                             }}
                         />
                     )}
                 />
 
-                <h2>{searchedAddress} </h2>
+                <h2> {searchedAddress} </h2>
+                <h3> {userEthAmount} </h3>
+                <h3> {userEthToUSD} </h3>
 
                 <CoinPriceBox
                     name={"GTC"}
@@ -360,6 +383,7 @@ export function ListFloor() {
                     marketCap={(gtc_price * gtcCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     Icon={GTClogo}
                     chart_url={"https://coinmarketcap.com/currencies/gitcoin/"}
+                    coins={parseFloat(gtcAmount)}
                 />
 
                 <CoinPriceBox
@@ -368,6 +392,7 @@ export function ListFloor() {
                     marketCap={(uni_price * uniCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     Icon={UNIlogo}
                     chart_url={"https://coinmarketcap.com/currencies/uniswap/"}
+                    coins={parseFloat(uniAmount)}
                 />
 
                 <CoinPriceBox
@@ -376,10 +401,15 @@ export function ListFloor() {
                     marketCap={(ens_price * ensCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     Icon={ENSlogo}
                     chart_url={"https://coinmarketcap.com/currencies/ethereum-name-service/"}
+                    coins={parseFloat(ensAmount)}
                 />
 
                 <br />
                 <br />
+                <br />
+
+                <h2> Total: ${((ens_price * parseFloat(ensAmount)) + (gtc_price * parseFloat(gtcAmount)) + (uni_price * parseFloat(uniAmount) + (price * parseFloat(userEthAmount)))).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h2>
+
                 <br />
 
                 <NavBar>

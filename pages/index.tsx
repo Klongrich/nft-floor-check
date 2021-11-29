@@ -8,8 +8,8 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>NFT Alpha Exchange</title>
-        <meta name="NFT-Alpha" content="Next Generation NFT exchange" />
+        <title>NFT-Alpha</title>
+        <meta name="NFT-Alpha" content="Next Generation Information Exchange" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
