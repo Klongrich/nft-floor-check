@@ -242,7 +242,7 @@ export function ListFloor() {
             var tokenBalance = await contract.methods.balanceOf(publicKey).call();
             var total = web3.utils.fromWei(tokenBalance, 'ether');
 
-            // console.log(tokenAddresses[i].name + " : " + total);
+            console.log(tokenAddresses[i].name + " : " + total);
 
             var object = {
                 name: tokenAddresses[i].name,
@@ -361,7 +361,7 @@ export function ListFloor() {
                     // options={TopCollections}
                     renderInput={(params: any) => (
                         <TextField {...params}
-                            label="Search ETH address"
+                            label="Search ENS Name"
                             variant="outlined"
                             onKeyDown={e => {
                                 // console.log(e.code);
