@@ -33,7 +33,7 @@ const Container = styled.div`
 
     p {
         font-size: 16px;
-    
+        
         padding-top: 2px;
         padding-bottom: 2px;
     }

@@ -22,13 +22,15 @@ import CoinPriceBox from "../components/CoinPriceBox";
 import GetNftInfo from "../utils/getNftInfo";
 import GetCoinPrice from "../utils/CoinPrices/getCoinPrice";
 import GetETHprice from "../utils/CoinPrices/getETHprice";
-
+import ParseUserAddress from "../utils/parseUserAddress";
 
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 
 import tokenAddresses from "../static/tokens/tokenContracts";
+
+
 
 // @ts-ignore
 import ENS, { getEnsAddress } from '@ensdomains/ensjs';
@@ -112,6 +114,38 @@ const ImageBox = Styled.div`
     text-align: center;
 `
 
+const UserMetaBox = Styled.div`
+    background-color: #fcf7f7;
+    text-align: center;
+
+    height: 60px;
+    width: 450px;
+    
+    margin-top: 20px;
+    margin-right: 30px;
+    padding-top: 2px;
+    padding-bottom :2px;
+    padding-left: 20px;
+    padding-right: 20px;
+  
+    display: inline-block;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+
+
+
+    h3 {
+        fonst-size: 10px;
+    }
+
+    :hover{
+        box-shadow: 0 0 10px black;
+        cursor: pointer;
+        transition-timing-function: ease-in;
+        transition: 0.2s;
+        transform: scale(1.03);
+    }
+`
+
 const catImageURLs: string[] = [];
 const BAYCImageURLs: string[] = [];
 
@@ -168,8 +202,8 @@ export function ListFloor() {
     const [userAddress, setUserAddress] = useState('');
     const [searchedAddress, setSearchedAddress] = useState('');
 
-    const [userEthAmount, setUserEthAmount] = useState('');
-    const [userEthToUSD, setUserEthToUSD] = useState('');
+    const [userEthAmount, setUserEthAmount] = useState('ETH AMOUNT');
+    const [userEthToUSD, setUserEthToUSD] = useState('USD AMOUNT OF ETH');
 
     const [gtcAmount, setGtcAmount] = useState('0.00');
     const [uniAmount, setUniAmount] = useState('0.00');
@@ -347,6 +381,7 @@ export function ListFloor() {
 
                 <h1> DAO price check </h1>
 
+
                 <Autocomplete
                     options={[]}
                     open={open}
@@ -366,8 +401,8 @@ export function ListFloor() {
                         <TextField {...params}
                             label="Search ENS Name"
                             variant="outlined"
-                            onKeyDown={e => {
-                                // console.log(e.code);
+                            onKeyPress={e => {
+                                console.log(e.key);
                                 if (e.code == "Enter" || e.code == "Go") {
                                     searchAddress(inputValue);
                                 }
@@ -376,9 +411,19 @@ export function ListFloor() {
                     )}
                 />
 
-                <h2> {searchedAddress} </h2>
-                <h3> {userEthAmount} </h3>
-                <h3> {userEthToUSD} </h3>
+                {/* <a href={"https://etherscan.io/address/" + searchedAddress}>
+                    <UserMetaBox>
+                        <h3> {ParseUserAddress(searchedAddress)} </h3>
+                    </UserMetaBox>
+                </a>
+
+                <UserMetaBox>
+                    <h3> {userEthAmount} </h3>
+                </UserMetaBox>
+
+                <UserMetaBox>
+                    <h3> {userEthToUSD} </h3>
+                </UserMetaBox> */}
 
                 <CoinPriceBox
                     name={"GTC"}

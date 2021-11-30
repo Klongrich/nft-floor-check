@@ -18,7 +18,8 @@ const Container = styled.div`
     border-radius: 15px;
   
     margin-top: 40px;
-    margin-right: 50px;
+    margin-right: 70px;
+
 
     padding-top: 1px;
     padding-bottom: 10px;
@@ -29,7 +30,7 @@ const Container = styled.div`
 
     p {
         font-size: 16px;
-    
+
         padding-top: 2px;
         padding-bottom: 2px;
     }
