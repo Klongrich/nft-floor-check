@@ -282,6 +282,22 @@ export function ListFloor() {
         }
     }
 
+    async function getBAYCInfo(url: string, setDataPrice: any) {
+        await GetNftInfo(url, setDataPrice);
+
+        if (BAYCPrice.length > 0) {
+            for (let i = 0; i < max_list; i++) {
+                if (BAYCPrice[i].id) {
+                    fetch("https://bafybeihpjhkeuiq3k6nqa3fkgeigeri7iebtrsuyuey5y6vy36n345xmbi.ipfs.dweb.link/" + BAYCPrice[i].id)
+                        .then(res => res.json())
+                        .then(data => {
+                            BAYCImageURLs.push(data.image)
+                        })
+                }
+            }
+        }
+    }
+
     async function updateState(state: string) {
         const window_height = 860;
 
@@ -313,14 +329,11 @@ export function ListFloor() {
     }
 
     async function getERC20tokens(publicKey: string, web3: any) {
-
         for (let i = 0; i < tokenAddresses.length; i++) {
             // @ts-ignore
             const contract = new web3.eth.Contract(ERC_20_ABI, tokenAddresses[i].contract);
             var tokenBalance = await contract.methods.balanceOf(publicKey).call();
             var total = web3.utils.fromWei(tokenBalance, 'ether');
-
-            // console.log(tokenAddresses[i].name + " : " + total);
 
             var object = {
                 name: tokenAddresses[i].name,
@@ -328,7 +341,6 @@ export function ListFloor() {
             }
             tokenMeta[i] = object;
         }
-
         setEnsAmount(tokenMeta[0].balance);
         setGtcAmount(tokenMeta[1].balance);
         setUniAmount(tokenMeta[2].balance);
@@ -368,6 +380,7 @@ export function ListFloor() {
 
     useEffect(() => {
 
+
         const web3Modal = new Web3Modal({
             cacheProvider: false, // optional
             providerOptions, // required
@@ -395,34 +408,19 @@ export function ListFloor() {
             }
         }, false);
 
-        async function getBAYCInfo(url: string, setDataPrice: any) {
-            await GetNftInfo(url, setDataPrice);
-
-            if (BAYCPrice.length > 0) {
-                for (let i = 0; i < max_list; i++) {
-                    if (BAYCPrice[i].id) {
-                        fetch("https://bafybeihpjhkeuiq3k6nqa3fkgeigeri7iebtrsuyuey5y6vy36n345xmbi.ipfs.dweb.link/" + BAYCPrice[i].id)
-                            .then(res => res.json())
-                            .then(data => {
-                                BAYCImageURLs.push(data.image)
-                            })
-                    }
-                }
-            }
-        }
 
         if (window.location.href.split('/')[3] != "") {
             setState(window.location.href.split('/')[3]);
         }
 
-        // GetNftInfo(cool_cats_url, setCoolCatsPrice);
-        // getBAYCInfo(BAYC_url, setBAYCPrice);
+        GetNftInfo(cool_cats_url, setCoolCatsPrice);
+        getBAYCInfo(BAYC_url, setBAYCPrice);
 
-        // GetNftInfo(pudgy_url, setPudgyPrice);
-        // GetNftInfo(KIA_url, setKIAPrice);
-        // GetNftInfo(sappy_seal_url, setSappySealPrice);
-        // GetNftInfo(BAYC_url, setBAYCPrice);
-        // GetNftInfo(MAYC_url, setMAYCprice);
+        GetNftInfo(pudgy_url, setPudgyPrice);
+        GetNftInfo(KIA_url, setKIAPrice);
+        GetNftInfo(sappy_seal_url, setSappySealPrice);
+        GetNftInfo(BAYC_url, setBAYCPrice);
+        GetNftInfo(MAYC_url, setMAYCprice);
 
         loadWeb3();
 
