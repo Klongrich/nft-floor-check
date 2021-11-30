@@ -278,7 +278,7 @@ export function ListFloor() {
             var tokenBalance = await contract.methods.balanceOf(publicKey).call();
             var total = web3.utils.fromWei(tokenBalance, 'ether');
 
-            console.log(tokenAddresses[i].name + " : " + total);
+            // console.log(tokenAddresses[i].name + " : " + total);
 
             var object = {
                 name: tokenAddresses[i].name,
@@ -386,7 +386,7 @@ export function ListFloor() {
                     options={[]}
                     open={open}
                     onOpen={() => {
-                        console.log("Open");
+                        //console.log("Open");
                     }}
                     inputValue={inputValue}
                     onInputChange={(e: any, value: any) => {
@@ -402,7 +402,7 @@ export function ListFloor() {
                             label="Search ENS Name"
                             variant="outlined"
                             onKeyPress={e => {
-                                console.log(e.key);
+                                // console.log(e.key);
                                 if (e.code == "Enter" || e.code == "Go") {
                                     searchAddress(inputValue);
                                 }
