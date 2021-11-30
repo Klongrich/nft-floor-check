@@ -34,6 +34,8 @@ import tokenAddresses from "../static/tokens/tokenContracts";
 
 // @ts-ignore
 import ENS, { getEnsAddress } from '@ensdomains/ensjs';
+import { setEnvironmentData } from "worker_threads";
+import { DefaultDeserializer } from "v8";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -184,6 +186,43 @@ const tokenMeta = [
     }
 ]
 
+// interface userNftMeta { 
+//     id 
+//     token_id
+//     num_sales
+//     background_color,
+//     image_url, 
+//     image_preview_url, 
+//     image_thumbnail_url, 
+//     image_original_url, 
+//     animation_url, 
+//     animation_original_url, 
+//     name, 
+//     description, 
+//     external_link, 
+//     asset_contract, 
+//     permalink, 
+//     collection, 
+//     decimals, 
+//     token_metadata, 
+//     owner, 
+//     sell_orders, 
+//     creator, 
+//     traits, 
+//     last_sale, 
+//     top_bid, 
+//     listing_date, 
+//     is_presale, 
+//     transfer_fee_payment_token, 
+//     transfer_fee
+// }
+
+var imageURLs = [
+    {
+        image_url: "placeHolder"
+    }
+]
+
 export function ListFloor() {
 
     const [open, setOpen] = useState(false);
@@ -211,6 +250,9 @@ export function ListFloor() {
     const [aaveAmount, setAaveAmount] = useState('0.00');
 
     const [state, setState] = useState("home");
+
+    const [userNfts, setUserNfts] = useState(imageURLs);
+    const [loadedNFTs, setLoadedNFTs] = useState(false);
 
     const price = GetETHprice();
     const gtc_price = GetCoinPrice("gitcoin");
@@ -293,6 +335,18 @@ export function ListFloor() {
         setAaveAmount(tokenMeta[3].balance);
     }
 
+    async function getUserNFTS(userAddress: string) {
+        fetch("https://api.opensea.io/api/v1/assets?order_direction=desc&offset=0&limit=50&owner=" + userAddress)
+            .then(res => res.json())
+            .then(data => {
+                setUserNfts(data.assets);
+                setLoadedNFTs(true);
+                for (let i = 0; i < 50; i++) {
+                    console.log(data.assets[i].image_url);
+                }
+            })
+    }
+
     //Move to "Resovle ETH function in utils" a.k.a raise money and hire someone .... 
     async function searchAddress(inputAddress: string) {
         const web3 = await new Web3(provider);
@@ -307,11 +361,10 @@ export function ListFloor() {
         setUserEthToUSD('$' + (parseFloat(ethAmount) * price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         setSearchedAddress(address);
 
+        await getUserNFTS(address);
         await getERC20tokens(address, web3);
-        // await getERC721tokens(address, web3);
-
-        // console.log(address);
     }
+
 
     useEffect(() => {
 
@@ -362,14 +415,14 @@ export function ListFloor() {
             setState(window.location.href.split('/')[3]);
         }
 
-        GetNftInfo(cool_cats_url, setCoolCatsPrice);
-        getBAYCInfo(BAYC_url, setBAYCPrice);
+        // GetNftInfo(cool_cats_url, setCoolCatsPrice);
+        // getBAYCInfo(BAYC_url, setBAYCPrice);
 
-        GetNftInfo(pudgy_url, setPudgyPrice);
-        GetNftInfo(KIA_url, setKIAPrice);
-        GetNftInfo(sappy_seal_url, setSappySealPrice);
-        GetNftInfo(BAYC_url, setBAYCPrice);
-        GetNftInfo(MAYC_url, setMAYCprice);
+        // GetNftInfo(pudgy_url, setPudgyPrice);
+        // GetNftInfo(KIA_url, setKIAPrice);
+        // GetNftInfo(sappy_seal_url, setSappySealPrice);
+        // GetNftInfo(BAYC_url, setBAYCPrice);
+        // GetNftInfo(MAYC_url, setMAYCprice);
 
         loadWeb3();
 
@@ -379,8 +432,7 @@ export function ListFloor() {
         <>
             <div>
 
-                <h1> DAO price check </h1>
-
+                <h1> DAO Price Check </h1>
 
                 <Autocomplete
                     options={[]}
@@ -411,7 +463,7 @@ export function ListFloor() {
                     )}
                 />
 
-                {/* <a href={"https://etherscan.io/address/" + searchedAddress}>
+                <a href={"https://etherscan.io/address/" + searchedAddress}>
                     <UserMetaBox>
                         <h3> {ParseUserAddress(searchedAddress)} </h3>
                     </UserMetaBox>
@@ -423,7 +475,7 @@ export function ListFloor() {
 
                 <UserMetaBox>
                     <h3> {userEthToUSD} </h3>
-                </UserMetaBox> */}
+                </UserMetaBox>
 
                 <CoinPriceBox
                     name={"GTC"}
@@ -465,9 +517,23 @@ export function ListFloor() {
                 <br />
                 <br />
 
-                <h2> Total: ${((ens_price * parseFloat(ensAmount)) + (gtc_price * parseFloat(gtcAmount)) + (uni_price * parseFloat(uniAmount) + (price * parseFloat(userEthAmount)))).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h2>
+                <h2> Total: ${((ens_price * parseFloat(ensAmount)) + (gtc_price * parseFloat(gtcAmount)) + (uni_price * parseFloat(uniAmount) + (price * parseFloat(userEthAmount)))).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </h2>
+
+                {loadedNFTs && <>
+                    {userNfts.map((data =>
+                        <>
+                            <img src={data.image_url}
+                                alt=""
+                                height={100}
+                                width={100}
+                            />
+                        </>
+                    ))}
+                </>
+                }
 
                 <br />
+
 
                 <NavBar>
                     <h1> NFT Floor Check</h1>
