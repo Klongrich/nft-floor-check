@@ -10,6 +10,10 @@ export const tokenAddresses = [
     {
         name: 'UNI',
         contract: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984'
+    },
+    {
+        name: 'AAVE',
+        contract: '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9'
     }
 ];
 

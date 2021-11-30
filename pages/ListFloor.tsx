@@ -14,16 +14,15 @@ import Image from "next/image";
 import ENSlogo from "../static/icons/ensLogo.jpeg";
 import UNIlogo from "../static/icons/UniswapLogo.png";
 import GTClogo from "../static/icons/GitCoinLogo.png";
+import AAVElogo from "../static/icons/aave-logo.png"
 
 import FloorBox from "../components/FloorBox";
 import CoinPriceBox from "../components/CoinPriceBox";
 
 import GetNftInfo from "../utils/getNftInfo";
-
-import GetGTCprice from "../utils/CoinPrices/getGTCprice";
+import GetCoinPrice from "../utils/CoinPrices/getCoinPrice";
 import GetETHprice from "../utils/CoinPrices/getETHprice";
-import GetENSprice from "../utils/CoinPrices/getENSprice";
-import GetUNIprice from "../utils/CoinPrices/getUNIprice";
+
 
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
@@ -175,17 +174,20 @@ export function ListFloor() {
     const [gtcAmount, setGtcAmount] = useState('0.00');
     const [uniAmount, setUniAmount] = useState('0.00');
     const [ensAmount, setEnsAmount] = useState('0.00');
+    const [aaveAmount, setAaveAmount] = useState('0.00');
 
     const [state, setState] = useState("home");
 
     const price = GetETHprice();
-    const gtc_price = GetGTCprice();
-    const uni_price = GetUNIprice();
-    const ens_price = GetENSprice();
+    const gtc_price = GetCoinPrice("gitcoin");
+    const uni_price = GetCoinPrice("uniswap");
+    const ens_price = GetCoinPrice("ethereum-name-service");
+    const aave_price = GetCoinPrice('AAVE');
 
     const gtcCirculatingSupply = 14198201.73
     const uniCirculatingSupply = 627857378.77
     const ensCirculatingSupply = 20244862.09
+    const aaveCirculatingSupply = 13397359.74
 
     const router = useRouter();
 
@@ -254,6 +256,7 @@ export function ListFloor() {
         setEnsAmount(tokenMeta[0].balance);
         setGtcAmount(tokenMeta[1].balance);
         setUniAmount(tokenMeta[2].balance);
+        setAaveAmount(tokenMeta[3].balance);
     }
 
     //Move to "Resovle ETH function in utils" a.k.a raise money and hire someone .... 
@@ -365,7 +368,7 @@ export function ListFloor() {
                             variant="outlined"
                             onKeyDown={e => {
                                 // console.log(e.code);
-                                if (e.code == "Enter") {
+                                if (e.code == "Enter" || e.code == "Go") {
                                     searchAddress(inputValue);
                                 }
                             }}
@@ -402,6 +405,15 @@ export function ListFloor() {
                     Icon={ENSlogo}
                     chart_url={"https://coinmarketcap.com/currencies/ethereum-name-service/"}
                     coins={parseFloat(ensAmount)}
+                />
+
+                <CoinPriceBox
+                    name={"AAVE"}
+                    price={aave_price.toString()}
+                    marketCap={(aave_price * aaveCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    Icon={AAVElogo}
+                    chart_url={"https://coinmarketcap.com/currencies/aave/"}
+                    coins={parseFloat(aaveAmount)}
                 />
 
                 <br />
