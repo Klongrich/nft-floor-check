@@ -36,6 +36,8 @@ import tokenAddresses from "../static/tokens/tokenContracts";
 import ENS, { getEnsAddress } from '@ensdomains/ensjs';
 import { setEnvironmentData } from "worker_threads";
 import { DefaultDeserializer } from "v8";
+import { RSA_NO_PADDING } from "constants";
+import { ThemeContext } from "@mui/styled-engine";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -423,6 +425,16 @@ export function ListFloor() {
         GetNftInfo(MAYC_url, setMAYCprice);
 
         loadWeb3();
+
+        async function test_api() {
+            fetch('http://18.191.10.42:3010/Test')
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                })
+        }
+
+        test_api();
 
     }, [state])
 

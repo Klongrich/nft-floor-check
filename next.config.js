@@ -9,6 +9,10 @@ module.exports = {
   async rewrites() {
     return [
       {
+        source: '/Test',
+        destination: 'http://18.191.10.42:3010'
+      },
+      {
         source: '/prices/penguins',
         destination: 'https://data.rarity.tools/prices/pudgypenguins'
       },
