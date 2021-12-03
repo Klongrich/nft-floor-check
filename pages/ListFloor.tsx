@@ -603,7 +603,7 @@ export function ListFloor() {
                                 max_list={8}
                                 opensea_url="https://opensea.io/assets/0x364c828ee171616a39897688a831c2499ad972ec/"
                                 ethPrice={price}
-                                start={0}
+                                start={1}
                             />
                         </div>
                     </FloorRow>
