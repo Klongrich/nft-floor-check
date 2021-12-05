@@ -30,8 +30,6 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 
 import tokenAddresses from "../static/tokens/tokenContracts";
 
-
-
 // @ts-ignore
 import ENS, { getEnsAddress } from '@ensdomains/ensjs';
 import { setEnvironmentData } from "worker_threads";
@@ -368,15 +366,20 @@ export function ListFloor() {
         const ens = new ENS({ provider, ensAddress: getEnsAddress('1') })
         var address = await ens.name(inputAddress).getAddress() // 0x123
 
-        const initAmount = await web3.eth.getBalance(address)
-        const ethAmount = web3.utils.fromWei(initAmount, 'ether');
+        if (address == "0x0000000000000000000000000000000000000000") {
+            alert("Address Not Found!");
+        } else {
 
-        setUserEthAmount(ethAmount);
-        setUserEthToUSD('$' + (parseFloat(ethAmount) * price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-        setSearchedAddress(address);
+            const initAmount = await web3.eth.getBalance(address)
+            const ethAmount = web3.utils.fromWei(initAmount, 'ether');
 
-        await getUserNFTS(address);
-        await getERC20tokens(address, web3);
+            setUserEthAmount(ethAmount);
+            setUserEthToUSD('$' + (parseFloat(ethAmount) * price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            setSearchedAddress(address);
+
+            await getUserNFTS(address);
+            await getERC20tokens(address, web3);
+        }
     }
 
 
@@ -426,21 +429,27 @@ export function ListFloor() {
 
         loadWeb3();
 
-        async function test_api() {
-            fetch('http://18.191.10.42:3010/Test')
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data);
-                })
-        }
+        //TO DO
 
-        test_api();
+        //1.) Add .ens name not found / resloved. -> add link to purchase ENS name.
+        //2.) Add link to buy ENS name here
+
+        // async function test_api() {
+        //     fetch('http://18.191.10.42:3010/Test')
+        //         .then(res => res.json())
+        //         .then(data => {
+        //             console.log(data);
+        //         })
+        // }
+
+        // test_api();
 
     }, [state])
 
     return (
         <>
             <div>
+
 
                 <h1> DAO Price Check </h1>
 
