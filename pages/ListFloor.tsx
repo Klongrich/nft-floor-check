@@ -117,12 +117,26 @@ const ImageBox = Styled.div`
     text-align: center;
 `
 
+const UserNftImageBox = Styled.div`
+    margin-left: 40px;
+    margin-bottom: 20px;
+
+    float: left;
+`
+
 const UserMetaBox = Styled.div`
     background-color: #fcf7f7;
     text-align: center;
 
+    @media (max-width: 2500px) {
+        width: 450px;
+    }
+
+    @media (max-width: 999px) {
+        width: 300px;
+    }
+
     height: 60px;
-    width: 450px;
     
     margin-top: 20px;
     margin-right: 30px;
@@ -133,8 +147,6 @@ const UserMetaBox = Styled.div`
   
     display: inline-block;
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-
-
 
     h3 {
         fonst-size: 10px;
@@ -147,6 +159,10 @@ const UserMetaBox = Styled.div`
         transition: 0.2s;
         transform: scale(1.03);
     }
+`
+
+const BestPratice = Styled.div`
+    color: white;
 `
 
 const catImageURLs: string[] = [];
@@ -220,7 +236,8 @@ const tokenMeta = [
 
 var imageURLs = [
     {
-        image_url: "placeHolder"
+        image_url: "placeHolder",
+        permalink: "placeHoder"
     }
 ]
 
@@ -357,7 +374,8 @@ export function ListFloor() {
                 setUserNfts(data.assets);
                 setLoadedNFTs(true);
                 for (let i = 0; i < 50; i++) {
-                    console.log(data.assets[i].image_url);
+                    // console.log(data.assets[i].image_url);
+                    console.log(data.assets[i]);
                 }
             })
     }
@@ -390,7 +408,6 @@ export function ListFloor() {
 
     useEffect(() => {
 
-
         const web3Modal = new Web3Modal({
             cacheProvider: false, // optional
             providerOptions, // required
@@ -417,7 +434,6 @@ export function ListFloor() {
                 router.push("/")
             }
         }, false);
-
 
         if (window.location.href.split('/')[3] != "") {
             setState(window.location.href.split('/')[3]);
@@ -454,7 +470,6 @@ export function ListFloor() {
     return (
         <>
             <div>
-
 
                 <h1> DAO Price Check </h1>
 
@@ -545,18 +560,22 @@ export function ListFloor() {
                 {loadedNFTs && <>
                     {userNfts.map((data =>
                         <>
-                            <img src={data.image_url}
-                                alt=""
-                                height={100}
-                                width={100}
-                            />
+                            <UserNftImageBox>
+                                <a href={data.permalink} >
+                                    <img src={data.image_url}
+                                        alt=""
+                                        height={100}
+                                        width={100}
+                                    />
+                                </a>
+                            </UserNftImageBox>
                         </>
                     ))}
                 </>
                 }
 
                 <br />
-
+                <BestPratice> Holder </BestPratice>
 
                 <NavBar>
                     <h1> NFT Floor Check</h1>
