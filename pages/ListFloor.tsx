@@ -36,6 +36,7 @@ import { setEnvironmentData } from "worker_threads";
 import { DefaultDeserializer } from "v8";
 import { RSA_NO_PADDING } from "constants";
 import { ThemeContext } from "@mui/styled-engine";
+import { AnyARecord } from "dns";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -254,6 +255,8 @@ export function ListFloor() {
     const [userNfts, setUserNfts] = useState(imageURLs);
     const [loadedNFTs, setLoadedNFTs] = useState(false);
 
+    const [inputText, setInputText] = useState("");
+
     const price = GetETHprice();
     const gtc_price = GetCoinPrice("gitcoin");
     const uni_price = GetCoinPrice("uniswap");
@@ -360,11 +363,13 @@ export function ListFloor() {
     }
 
     //Move to "Resovle ETH function in utils" a.k.a raise money and hire someone .... 
-    async function searchAddress(inputAddress: string) {
+    async function searchAddress(event: any) {
+        event.preventDefault();
+
         const web3 = await new Web3(provider);
         //Check if input address ends in .eth or .crypto also if it's a valid address
         const ens = new ENS({ provider, ensAddress: getEnsAddress('1') })
-        var address = await ens.name(inputAddress).getAddress() // 0x123
+        var address = await ens.name(inputText).getAddress() // 0x123
 
         if (address == "0x0000000000000000000000000000000000000000") {
             alert("Address Not Found!");
@@ -453,34 +458,33 @@ export function ListFloor() {
 
                 <h1> DAO Price Check </h1>
 
-                <Autocomplete
-                    options={[]}
-                    open={open}
-                    onOpen={() => {
-                        //console.log("Open");
-                    }}
-                    inputValue={inputValue}
-                    onInputChange={(e: any, value: any) => {
-                        setInputValue(value);
-                    }}
-                    onChange={(e: any, value: any) => {
-                        // console.log("Do Something");
-                        // Check_Collection_Input(value);
-                    }}
-                    // options={TopCollections}
-                    renderInput={(params: any) => (
-                        <TextField {...params}
-                            label="Search ENS Name"
-                            variant="outlined"
-                            onKeyPress={e => {
-                                // console.log(e.key);
-                                if (e.code == "Enter" || e.code == "Go") {
-                                    searchAddress(inputValue);
-                                }
-                            }}
-                        />
-                    )}
-                />
+                <form onSubmit={searchAddress} >
+                    <Autocomplete
+                        options={[]}
+                        open={open}
+                        onOpen={() => {
+                            //console.log("Open");
+                        }}
+                        inputValue={inputValue}
+                        onInputChange={(e: any, value: any) => {
+                            setInputValue(value);
+                        }}
+                        onChange={(e: any, value: any) => {
+                            // console.log("Do Something");
+                            // Check_Collection_Input(value);
+                        }}
+                        // options={TopCollections}
+                        renderInput={(params: any) => (
+                            <TextField {...params}
+                                label="Search ENS Name"
+                                variant="outlined"
+                                onKeyPress={e => {
+                                    setInputText(inputValue);
+                                }}
+                            />
+                        )}
+                    />
+                </form>
 
                 <a href={"https://etherscan.io/address/" + searchedAddress}>
                     <UserMetaBox>
