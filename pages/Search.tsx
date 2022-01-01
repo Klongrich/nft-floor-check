@@ -29,7 +29,7 @@ import tokenAddresses from "../static/tokens/tokenContracts";
 // @ts-ignore
 import ENS, { getEnsAddress } from '@ensdomains/ensjs';
 import { setEnvironmentData } from "worker_threads";
-import { DefaultDeserializer } from "v8";
+import { cachedDataVersionTag, DefaultDeserializer } from "v8";
 import { RSA_NO_PADDING } from "constants";
 import { ThemeContext } from "@mui/styled-engine";
 import { AnyARecord } from "dns";
@@ -169,12 +169,12 @@ const tokenMeta = [
     }
 ]
 
-var imageURLs = [
-    {
-        image_url: "placeHolder",
-        permalink: "placeHoder"
-    }
-]
+interface imageURLs {
+    image_url: string
+    permalink: string
+}
+
+var nftMeta: imageURLs[] = [];
 
 export function Search() {
 
@@ -197,7 +197,8 @@ export function Search() {
     const [ensAmount, setEnsAmount] = useState('0.00');
     const [aaveAmount, setAaveAmount] = useState('0.00');
 
-    const [userNfts, setUserNfts] = useState(imageURLs);
+    const [userNfts, setUserNfts] = useState(nftMeta);
+    const [totalNfts, setTotalNfts] = useState(0);
     const [loadedNFTs, setLoadedNFTs] = useState(false);
 
     const [inputText, setInputText] = useState("");
@@ -232,11 +233,22 @@ export function Search() {
         setAaveAmount(tokenMeta[3].balance);
     }
 
-    async function getUserNFTS(userAddress: string) {
-        fetch("https://api.opensea.io/api/v1/assets?order_direction=desc&offset=0&limit=50&owner=" + userAddress)
+    async function getUserNFTS(userAddress: string, offset: number, totalNFTs: number) {
+        fetch("https://api.opensea.io/api/v1/assets?order_direction=desc&offset=" + offset + "&limit=50&owner=" + userAddress)
             .then(res => res.json())
             .then(data => {
-                setUserNfts(data.assets);
+                for (let i = 0; i < data.assets.length; i++) {
+                    nftMeta.push({
+                        image_url: data.assets[i].image_url,
+                        permalink: data.assets[i].permalink
+                    })
+                    totalNFTs += 1;
+                }
+                if (data.assets.length >= 50) {
+                    getUserNFTS(userAddress, offset += 49, totalNFTs);
+                }
+                setTotalNfts(totalNFTs);
+                setUserNfts(nftMeta)
                 setLoadedNFTs(true);
             })
     }
@@ -261,13 +273,14 @@ export function Search() {
             setUserEthToUSD('$' + (parseFloat(ethAmount) * price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             setSearchedAddress(address);
 
-            await getUserNFTS(address);
+            nftMeta = [];
+
+            await getUserNFTS(address, 0, 0);
             await getERC20tokens(address, web3);
         }
     }
 
     async function loadWeb3() {
-
         var web3Modal = new Web3Modal({
             cacheProvider: true, // optional
             providerOptions, // required
@@ -295,9 +308,7 @@ export function Search() {
     }
 
     useEffect(() => {
-
         loadWeb3();
-
         //TO DO
 
         //1.) Add .ens name not found / resloved. -> add link to purchase ENS name.
@@ -358,7 +369,6 @@ export function Search() {
                         <ListFloor />
                     </>
                 }
-
 
                 {state == "home" &&
                     <>
@@ -446,6 +456,7 @@ export function Search() {
 
                         <h2> Total: ${((ens_price * parseFloat(ensAmount)) + (gtc_price * parseFloat(gtcAmount)) + (uni_price * parseFloat(uniAmount) + (price * parseFloat(userEthAmount)))).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </h2>
 
+                        <h2> Total Nfts: {totalNfts} </h2>
                         {loadedNFTs && <>
                             {userNfts.map((data =>
                                 <>
