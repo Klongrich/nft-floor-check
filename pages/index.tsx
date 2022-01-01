@@ -2,7 +2,8 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import ListFloor from "./ListFloor";
+
+import Search from "./Search";
 
 const Home: NextPage = () => {
   return (
@@ -14,7 +15,7 @@ const Home: NextPage = () => {
       </Head>
 
       <div>
-        <ListFloor />
+        <Search />
       </div>
 
     </div>
