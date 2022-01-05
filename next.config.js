@@ -4,7 +4,9 @@ module.exports = {
     domains: ['koala-intelligence-agency.s3.us-east-2.amazonaws.com',
       'ipfs.io',
       'bafybeida6b2f54lassxtg2subbm2n5uoltcg5kqvklalmrrfch7nxipiwi.ipfs.dweb.link',
-      'api.coolcatsnft.com'],
+      'api.coolcatsnft.com',
+      'lh3.googleusercontent.com',
+      'storage.opensea.io'],
   },
   async rewrites() {
     return [
