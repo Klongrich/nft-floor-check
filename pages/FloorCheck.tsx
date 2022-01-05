@@ -12,6 +12,13 @@ import { spacing } from '@mui/system';
 
 import GetETHprice from "../utils/CoinPrices/getETHprice";
 
+import PudgyLogo from "../static/icons/pudgypenguins.png";
+import KIALogo from "../static/icons/KIA.png";
+import CoolCatsLogo from "../static/icons/CoolCatsLogo.jpeg";
+import SappySealsLogo from "../static/icons/SappySeals.jpeg";
+import BAYCLogo from "../static/icons/BAYC.png";
+import MAYCLogo from "../static/icons/MAYC.png";
+
 const Button = styled(MuiButton)(spacing);
 
 const pudgy_url = "/prices/penguins";
@@ -71,7 +78,14 @@ const NavBar = Styled.div`
         padding-top: 10px;
         padding-bottom: 10px;
     }
-    width: 380px;
+
+    @media (max-width: 2500px) {
+        width: 750px;
+    }
+
+        @media (max-width: 999px) {
+            width: 380px;
+    }
 `
 
 const FloorRow = Styled.div`
@@ -86,6 +100,7 @@ const ImageBox = Styled.div`
 export function FloorCheck() {
 
     const [state, setState] = useState("home");
+    const [windowWidth, setWindowWidth] = useState(0.00);
 
     const [BAYCPrice, setBAYCPrice] = useState(place_holder);
     const [MAYCPrice, setMAYCprice] = useState(place_holder);
@@ -172,10 +187,12 @@ export function FloorCheck() {
 
     useEffect(() => {
 
+        setWindowWidth(window.innerWidth);
+
+        GetNftInfo(pudgy_url, setPudgyPrice);
         GetNftInfo(cool_cats_url, setCoolCatsPrice);
         getBAYCInfo(BAYC_url, setBAYCPrice);
 
-        GetNftInfo(pudgy_url, setPudgyPrice);
         GetNftInfo(KIA_url, setKIAPrice);
         GetNftInfo(sappy_seal_url, setSappySealPrice);
         GetNftInfo(BAYC_url, setBAYCPrice);
@@ -191,14 +208,18 @@ export function FloorCheck() {
                 <Button style={{ minWidth: '142px' }} mr={3} size="large" variant="outlined"> ETH </Button>
                 <Button style={{ minWidth: '142px' }} mr={5} size="large" variant="outlined"> MATIC </Button>
 
-                <Button style={{ minWidth: '142px' }} mr={3} mt={2} size="large" variant="outlined"> SOL </Button>
-                <Button style={{ minWidth: '142px' }} mr={5} mt={2} size="large" variant="outlined"> EOS </Button>
 
+                {windowWidth >= 999 &&
+                    <>
+                        <Button style={{ minWidth: '142px' }} mr={3} mt={0} size="large" variant="outlined"> SOL </Button>
+                        <Button style={{ minWidth: '142px' }} mr={5} mt={0} size="large" variant="outlined"> EOS </Button>
+                    </>
+                }
 
-                {/* {window.innerWidth < 999 && <>
-                        <Button style={{ minWidth: '112px' }} mr={5} mt={2} size="large" variant="outlined"> SOL </Button>
-                        <Button style={{ minWidth: '112px' }} mr={5} mt={2} size="large" variant="outlined"> EOS </Button>
-                    </>} */}
+                {windowWidth < 999 && <>
+                    <Button style={{ minWidth: '142px' }} mr={3} mt={2} size="large" variant="outlined"> SOL </Button>
+                    <Button style={{ minWidth: '142px' }} mr={5} mt={2} size="large" variant="outlined"> EOS </Button>
+                </>}
             </NavBar>
 
             {state == "home" && <>
@@ -210,6 +231,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/"
                             ethPrice={price}
                             start={1}
+                            icon={PudgyLogo}
                         />
                     </div>
 
@@ -220,6 +242,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0x3f5fb35468e9834a43dca1c160c69eaae78b6360/"
                             ethPrice={price}
                             start={1}
+                            icon={KIALogo}
                         />
                     </div>
 
@@ -233,6 +256,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0x1a92f7381b9f03921564a437210bb9396471050c/"
                             ethPrice={price}
                             start={1}
+                            icon={CoolCatsLogo}
                         />
                     </div>
 
@@ -243,6 +267,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0x364c828ee171616a39897688a831c2499ad972ec/"
                             ethPrice={price}
                             start={1}
+                            icon={SappySealsLogo}
                         />
                     </div>
                 </FloorRow>
@@ -256,6 +281,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/"
                             ethPrice={price}
                             start={0}
+                            icon={BAYCLogo}
                         />
                     </div>
 
@@ -266,6 +292,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0x60e4d786628fea6478f785a6d7e704777c86a7c6/"
                             ethPrice={price}
                             start={0}
+                            icon={MAYCLogo}
                         />
                     </div>
 

@@ -372,83 +372,86 @@ export function Search() {
 
                 {state == "home" &&
                     <>
-                        <form onSubmit={searchAddress} >
-                            <Autocomplete
-                                options={[]}
-                                open={open}
-                                onOpen={() => {
-                                    //console.log("Open");
-                                }}
-                                inputValue={inputValue}
-                                onInputChange={(e: any, value: any) => {
-                                    setInputValue(value);
-                                }}
-                                onChange={(e: any, value: any) => {
-                                    // console.log("Do Something");
-                                    // Check_Collection_Input(value);
-                                }}
-                                // options={TopCollections}
-                                renderInput={(params: any) => (
-                                    <TextField {...params}
-                                        label="Search ENS Name"
-                                        variant="outlined"
-                                        onKeyPress={e => {
-                                            setInputText(inputValue);
-                                        }}
-                                    />
-                                )}
-                            />
-                        </form>
+                        <div>
+                            <form onSubmit={searchAddress} >
+                                <Autocomplete
+                                    options={[]}
+                                    open={open}
+                                    onOpen={() => {
+                                        //console.log("Open");
+                                    }}
+                                    inputValue={inputValue}
+                                    onInputChange={(e: any, value: any) => {
+                                        setInputValue(value);
+                                    }}
+                                    onChange={(e: any, value: any) => {
+                                        // console.log("Do Something");
+                                        // Check_Collection_Input(value);
+                                    }}
+                                    // options={TopCollections}
+                                    renderInput={(params: any) => (
+                                        <TextField {...params}
+                                            label="Search ENS Name"
+                                            variant="outlined"
+                                            onKeyPress={e => {
+                                                setInputText(inputValue);
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </form>
 
-                        <a href={"https://etherscan.io/address/" + searchedAddress}>
+                            <a href={"https://etherscan.io/address/" + searchedAddress}>
+                                <UserMetaBox>
+                                    <h3> {ParseUserAddress(searchedAddress)} </h3>
+                                </UserMetaBox>
+                            </a>
+
                             <UserMetaBox>
-                                <h3> {ParseUserAddress(searchedAddress)} </h3>
+                                <h3> {userEthAmount} </h3>
                             </UserMetaBox>
-                        </a>
 
-                        <UserMetaBox>
-                            <h3> {userEthAmount} </h3>
-                        </UserMetaBox>
+                            <UserMetaBox>
+                                <h3> {userEthToUSD} </h3>
+                            </UserMetaBox>
 
-                        <UserMetaBox>
-                            <h3> {userEthToUSD} </h3>
-                        </UserMetaBox>
+                            <CoinPriceBox
+                                name={"GTC"}
+                                price={gtc_price.toString()}
+                                marketCap={(gtc_price * gtcCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                Icon={GTClogo}
+                                chart_url={"https://coinmarketcap.com/currencies/gitcoin/"}
+                                coins={parseFloat(gtcAmount)}
+                            />
 
-                        <CoinPriceBox
-                            name={"GTC"}
-                            price={gtc_price.toString()}
-                            marketCap={(gtc_price * gtcCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                            Icon={GTClogo}
-                            chart_url={"https://coinmarketcap.com/currencies/gitcoin/"}
-                            coins={parseFloat(gtcAmount)}
-                        />
+                            <CoinPriceBox
+                                name={"UNI"}
+                                price={uni_price.toString()}
+                                marketCap={(uni_price * uniCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                Icon={UNIlogo}
+                                chart_url={"https://coinmarketcap.com/currencies/uniswap/"}
+                                coins={parseFloat(uniAmount)}
+                            />
 
-                        <CoinPriceBox
-                            name={"UNI"}
-                            price={uni_price.toString()}
-                            marketCap={(uni_price * uniCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                            Icon={UNIlogo}
-                            chart_url={"https://coinmarketcap.com/currencies/uniswap/"}
-                            coins={parseFloat(uniAmount)}
-                        />
+                            <CoinPriceBox
+                                name={"ENS"}
+                                price={ens_price.toString()}
+                                marketCap={(ens_price * ensCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                Icon={ENSlogo}
+                                chart_url={"https://coinmarketcap.com/currencies/ethereum-name-service/"}
+                                coins={parseFloat(ensAmount)}
+                            />
 
-                        <CoinPriceBox
-                            name={"ENS"}
-                            price={ens_price.toString()}
-                            marketCap={(ens_price * ensCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                            Icon={ENSlogo}
-                            chart_url={"https://coinmarketcap.com/currencies/ethereum-name-service/"}
-                            coins={parseFloat(ensAmount)}
-                        />
+                            <CoinPriceBox
+                                name={"AAVE"}
+                                price={aave_price.toString()}
+                                marketCap={(aave_price * aaveCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                Icon={AAVElogo}
+                                chart_url={"https://coinmarketcap.com/currencies/aave/"}
+                                coins={parseFloat(aaveAmount)}
+                            />
 
-                        <CoinPriceBox
-                            name={"AAVE"}
-                            price={aave_price.toString()}
-                            marketCap={(aave_price * aaveCirculatingSupply).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                            Icon={AAVElogo}
-                            chart_url={"https://coinmarketcap.com/currencies/aave/"}
-                            coins={parseFloat(aaveAmount)}
-                        />
+                        </div>
 
                         <br />
                         <br />
@@ -460,15 +463,18 @@ export function Search() {
                         {loadedNFTs && <>
                             {userNfts.map((data =>
                                 <>
-                                    <UserNftImageBox>
-                                        <a href={data.permalink} >
-                                            <img src={data.image_url}
-                                                alt=""
-                                                height={100}
-                                                width={100}
-                                            />
-                                        </a>
-                                    </UserNftImageBox>
+                                    {data.image_url &&
+                                        <>
+                                            <UserNftImageBox>
+                                                <a href={data.permalink} >
+                                                    <Image src={data.image_url}
+                                                        alt="Image Not Found"
+                                                        height={100}
+                                                        width={100}
+                                                    />
+                                                </a>
+                                            </UserNftImageBox>
+                                        </>}
                                 </>
                             ))}
                         </>
