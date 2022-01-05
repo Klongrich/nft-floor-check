@@ -231,7 +231,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/"
                             ethPrice={price}
                             start={1}
-                            icon={PudgyLogo}
+                            ImageIcon={PudgyLogo}
                         />
                     </div>
 
@@ -242,7 +242,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0x3f5fb35468e9834a43dca1c160c69eaae78b6360/"
                             ethPrice={price}
                             start={1}
-                            icon={KIALogo}
+                            ImageIcon={KIALogo}
                         />
                     </div>
 
@@ -256,7 +256,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0x1a92f7381b9f03921564a437210bb9396471050c/"
                             ethPrice={price}
                             start={1}
-                            icon={CoolCatsLogo}
+                            ImageIcon={CoolCatsLogo}
                         />
                     </div>
 
@@ -267,7 +267,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0x364c828ee171616a39897688a831c2499ad972ec/"
                             ethPrice={price}
                             start={1}
-                            icon={SappySealsLogo}
+                            ImageIcon={SappySealsLogo}
                         />
                     </div>
                 </FloorRow>
@@ -281,7 +281,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/"
                             ethPrice={price}
                             start={0}
-                            icon={BAYCLogo}
+                            ImageIcon={BAYCLogo}
                         />
                     </div>
 
@@ -292,7 +292,7 @@ export function FloorCheck() {
                             opensea_url="https://opensea.io/assets/0x60e4d786628fea6478f785a6d7e704777c86a7c6/"
                             ethPrice={price}
                             start={0}
-                            icon={MAYCLogo}
+                            ImageIcon={MAYCLogo}
                         />
                     </div>
 
