@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Styled from "styled-components";
 
 import GetNftInfo from "../utils/getNftInfo";
+import CurrentFloorPrices from "../utils/getCurrnetFloorPrice";
 import FloorBox from "../components/FloorBox";
 import Image from "next/image";
 
@@ -97,6 +98,12 @@ const ImageBox = Styled.div`
     text-align: center;
 `
 
+var nftFloorPricesETH = [{
+    name: "holder",
+    floorPriceETH: 0.00
+}
+]
+
 export function FloorCheck() {
 
     const [state, setState] = useState("home");
@@ -112,6 +119,8 @@ export function FloorCheck() {
 
     const router = useRouter();
     const price = GetETHprice();
+
+    nftFloorPricesETH = CurrentFloorPrices();
 
     async function getCoolCatsImages() {
         if (coolCatsPrice.length > 0) {
@@ -378,6 +387,22 @@ export function FloorCheck() {
                     ))}
                 </>}
             </ImageBox>
+
+            <div>
+                <h2> Floor Data </h2>
+
+                {nftFloorPricesETH.map((data =>
+                    <>
+                        <p>
+                            {data.name} : {data.floorPriceETH} ETH
+                        </p>
+
+                        <br />
+                    </>
+
+                ))}
+
+            </div>
         </>
     )
 
