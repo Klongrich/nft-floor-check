@@ -144,12 +144,11 @@ const ButtonBox = Styled.div`
 
 const MobileBox = Styled.div`
     @media (max-width: 999px) {
-        
     }
 `
 
 const SearchBoxContainer = Styled.div`
-margin-left: 25px; 
+margin-left: 25px;
 margin-right: 25px;
 `
 
@@ -364,7 +363,7 @@ export function Search() {
 
     async function getUserNFTS(userAddress: string, offset: number, totalNFTs: number, web3: any) {
 
-        await fetch("http://api.etherscan.io/api?module=account&action=tokennfttx&address=" + userAddress + "&startblock=0&endblock=999999999&sort=asc&apikey=E995JYZ41IC1Y4RGVEQ2K8PKGEHZHYS52A")
+        await fetch("https://api.etherscan.io/api?module=account&action=tokennfttx&address=" + userAddress + "&startblock=0&endblock=999999999&sort=asc&apikey=E995JYZ41IC1Y4RGVEQ2K8PKGEHZHYS52A")
             .then(res => res.json())
             .then(data => {
                 //setNftData(data.result);
