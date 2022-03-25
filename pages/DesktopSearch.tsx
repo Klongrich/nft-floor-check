@@ -50,6 +50,11 @@ const providerOptions = {
     },
 };
 
+const Container = Styled.div`
+    padding-left: 40px;
+    padding-right: 40px;
+`
+
 const UserNftImageBox = Styled.div`
     margin-left: 40px;
     margin-bottom: 20px;
@@ -317,8 +322,7 @@ export function Search() {
 
     return (
         <>
-            <div>
-
+            <Container>
                 <ButtonBox>
                     <Button style={{ minWidth: '182px', maxWidth: '100px' }}
                         size="large"
@@ -333,7 +337,7 @@ export function Search() {
                 <MobileBox>
                     {state == "home" &&
                         <>
-                            <h1> DAO - NFT - ERC</h1>
+                            <h1> Search ENS</h1>
                         </>
                     }
 
@@ -471,7 +475,7 @@ export function Search() {
 
                     </>
                 }
-            </div>
+            </Container>
         </>
     );
 }
