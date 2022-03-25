@@ -452,8 +452,8 @@ export function Search() {
             nftMeta = [];
             nftRawMeta = [];
 
-            await getUserNFTS(address, 0, 0, web3);
             await getERC20tokens(address, web3);
+            await getUserNFTS(address, 0, 0, web3);
         }
     }
 
