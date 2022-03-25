@@ -15,31 +15,23 @@ interface CoinMeta {
 const Container = styled.div`
     text-align: center;
     background-color: #fcf7f7;
- 
-    font-family: Helvetica;
     border-radius: 15px;
   
     margin-top: 40px;
-
+    margin-right: 70px;
     padding-top: 1px;
     padding-bottom: 10px;
     padding-left: 20px;
     padding-right: 20px;
   
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-
     p {
         font-size: 16px;
-
         padding-top: 2px;
         padding-bottom: 2px;
     }
-
-
-    width: 88%;
-
+    width: 300px;
     display: inline-block;
-
     :hover{
         box-shadow: 0 0 10px black;
         cursor: pointer;

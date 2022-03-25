@@ -7,18 +7,14 @@ import { spacing } from '@mui/system';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { TextField } from '@material-ui/core';
 
-import { ThemeProvider } from "@material-ui/core/styles";
-import { createTheme } from '@material-ui/core/styles';
-
 import Image from "next/image";
-import DesktopSearch from "./DesktopSearch";
 
 import ENSlogo from "../static/icons/ensLogo.jpeg";
 import UNIlogo from "../static/icons/UniswapLogo.png";
 import GTClogo from "../static/icons/GitCoinLogo.png";
 import AAVElogo from "../static/icons/aave-logo.png"
 
-import CoinPriceBox from "../components/CoinPriceBox";
+import CoinPriceBox from "../components/CoinPriceBoxDesktop";
 
 import GetCoinPrice from "../utils/CoinPrices/getCoinPrice";
 import GetETHprice from "../utils/CoinPrices/getETHprice";
@@ -41,22 +37,9 @@ import { AnyARecord } from "dns";
 import ListFloor from "./FloorCheck";
 import { setRequestMeta } from "next/dist/server/request-meta";
 
-import ERC_721_ABI from "./MockNFT.json";
-
 const Button = styled(MuiButton)(spacing);
 
 const API_KEY = "SGJRWYUZK9QJH2UUQ96JKTZAY4RAPIB5PK";
-
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: "#000000"
-        },
-        secondary: {
-            main: "#751200",
-        }
-    },
-});
 
 const providerOptions = {
     walletconnect: {
@@ -70,35 +53,32 @@ const providerOptions = {
 const UserNftImageBox = Styled.div`
     margin-left: 40px;
     margin-bottom: 20px;
-
     float: left;
-`
-
-const Container = Styled.div`
-    background-color: #f0ebe6;
-    font-family: Helvetica;
 `
 
 const UserMetaBox = Styled.div`
     background-color: #fcf7f7;
-    border-radius: 5px;
-
     text-align: center;
+    @media (max-width: 2500px) {
+        width: 450px;
+    }
+    @media (max-width: 999px) {
+        width: 300px;
+    }
     height: 60px;
-
+    
     margin-top: 20px;
+    margin-right: 30px;
     padding-top: 2px;
-    padding-bottom: 2px;
-
-    width: 88%;
-
+    padding-bottom :2px;
+    padding-left: 20px;
+    padding-right: 20px;
+  
     display: inline-block;
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-
     h3 {
         fonst-size: 10px;
     }
-
     :hover{
         box-shadow: 0 0 10px black;
         cursor: pointer;
@@ -109,36 +89,31 @@ const UserMetaBox = Styled.div`
 `
 
 const TopNavBar = Styled.div`
-
-    padding-top: 10px;
-
+    margin-top: -15px;
     h2 {
-        display: inline-box;
-        padding-left: 20px;
-        padding-right: 20px;
+        float :left;
+        margin-right: 20px;
         text-decoration: underline;
-
         :hover {
             cursor: pointer;
         }
     }
-
+    @media (max-width: 999px) {
+        padding-bottom: 25px;
+    }
 `
 
 const ButtonBox = Styled.div`
     @media (max-width: 2500px) {
         text-align: right;
+        margin-bottom: -60px;
+        margin-top: 25px;
     }
-
     @media (max-width: 999px) {
         text-align: left;
-        padding-top: 30px;
-        padding-bottom: 5px;
-        padding-left: 25px;
-        padding-right: 25px;
-
+        margin-top: 25px;
+        margin-bottom: 5px;
     }
-
 `
 
 const MobileBox = Styled.div`
@@ -168,7 +143,6 @@ const ERC_20_ABI = [
     }
 ];
 
-
 const tokenMeta = [
     {
         name: "0",
@@ -189,14 +163,7 @@ interface imageURLs {
     permalink: string
 }
 
-interface rawPacketData {
-    contractAddress: string
-    tokenID: string
-    tokenName: string
-}
-
 var nftMeta: imageURLs[] = [];
-var nftRawMeta: rawPacketData[] = [];
 
 export function Search() {
 
@@ -224,14 +191,6 @@ export function Search() {
     const [loadedNFTs, setLoadedNFTs] = useState(false);
 
     const [inputText, setInputText] = useState("");
-
-    const [isMobile, setIsMobile] = useState(false);
-
-    const [nftData, setNftData] = useState([{
-        contractAddress: "0x0",
-        tokenID: "0",
-        tokenName: "N/A"
-    }]);
 
     const price = GetETHprice();
     const gtc_price = GetCoinPrice("gitcoin");
@@ -263,160 +222,24 @@ export function Search() {
         setAaveAmount(tokenMeta[3].balance);
     }
 
-    async function checkUserNFTS(web3: any, nftData: any) {
-
-        var totalNFTs = 0;
-
-        for (let i = 0; i < nftData.length; i++) {
-            console.log(nftData[i].contractAddress);
-            console.log(nftData[i].tokenID);
-
-            if (nftData[i].contractAddress == "0xfac7bea255a6990f749363002136af6556b31e04") {
-                console.log("old ENS contract");
-                nftData[i].contractAddress = "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85"
-            }
-
-            try {
-                const NftContract = await new web3.eth.Contract(ERC_721_ABI.abi, nftData[i].contractAddress);
-
-                var result = await NftContract.methods.ownerOf(nftData[i].tokenID).call().catch((err: any) => {
-                    console.log(err);
-                })
-
-                console.log("Result: " + result);
-
-                if (result = "0xB5685343eD45D8b896633F9c128C55F758feb0A") {
-                    console.log("User Is Holding: " + nftData[i].tokenName + " : " + nftData[i].tokenID);
-
-                    var tokenURI = await NftContract.methods.tokenURI(nftData[i].tokenID).call()
-
-                    console.log("TokenURI: " + tokenURI);
-
-                    await fetch(tokenURI)
-                        .then(res => res.json())
-                        .then(data => {
-
-                            nftMeta.push({
-                                image_url: data.image,
-                                permalink: "https://opensea.io/assets/" + nftRawMeta[i].contractAddress + "/" + nftRawMeta[i].tokenID
-                            })
-                            totalNFTs += 1;
-                        })
-
-                    // nftRawMeta.push({
-                    //     contractAddress: nftData[i].contractAddress,
-                    //     tokenID: nftData[i].tokenID,
-                    //     tokenName: nftData[i].tokenName
-                    // })
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
-        setTotalNfts(totalNFTs);
-        setUserNfts(nftMeta)
-        setLoadedNFTs(true);
-    }
-
-    async function parseContracts(nftData: any, web3: any, userAddress: string) {
-        let tokenAddresses: any = [];
-        let tokenNames: any = [];
-
-        for (let i = 0; i < nftData.length; i++) {
-            tokenAddresses[i] = nftData[i].contractAddress;
-            tokenNames[i] = nftData[i].tokenName;
-        }
-
-        let uniqueTokenAddresses = [...new Set(tokenAddresses)]
-        let uniqueTokenNames = [...new Set(tokenNames)]
-
-        console.log(uniqueTokenAddresses);
-        console.log(uniqueTokenNames)
-
-        for (let x = 0; x < uniqueTokenAddresses.length; x++) {
-
-            const NftContract = await new web3.eth.Contract(ERC_721_ABI.abi, uniqueTokenAddresses[x]);
-
-            let TokenBalance = await NftContract.methods.balanceOf(userAddress).call();
-
-            nftMeta.push({
-                image_url: uniqueTokenNames[x],
-                permalink: TokenBalance
-            })
-        }
-
-        setUserNfts(nftMeta);
-        setLoadedNFTs(true);
-
-    }
-
-    async function getUserNFTS(userAddress: string, offset: number, totalNFTs: number, web3: any) {
-
-        await fetch("http://api.etherscan.io/api?module=account&action=tokennfttx&address=" + userAddress + "&startblock=0&endblock=999999999&sort=asc&apikey=E995JYZ41IC1Y4RGVEQ2K8PKGEHZHYS52A")
+    async function getUserNFTS(userAddress: string, offset: number, totalNFTs: number) {
+        fetch("https://api.opensea.io/api/v1/assets?order_direction=desc&offset=" + offset + "&limit=50&owner=" + userAddress)
             .then(res => res.json())
             .then(data => {
-                //setNftData(data.result);
-                // checkUserNFTS(web3, data.result);
-
-                parseContracts(data.result, web3, userAddress);
-                console.log(data.result.contractAddress);
+                for (let i = 0; i < data.assets.length; i++) {
+                    nftMeta.push({
+                        image_url: data.assets[i].image_url,
+                        permalink: data.assets[i].permalink
+                    })
+                    totalNFTs += 1;
+                }
+                if (data.assets.length >= 50) {
+                    getUserNFTS(userAddress, offset += 49, totalNFTs);
+                }
+                setTotalNfts(totalNFTs);
+                setUserNfts(nftMeta)
+                setLoadedNFTs(true);
             })
-
-
-        console.log(nftRawMeta);
-
-        for (let x = 0; x < nftRawMeta.length; x++) {
-            console.log(nftRawMeta[x])
-
-            // try {
-            //     const NftContract = await new web3.eth.Contract(ERC_721_ABI.abi, nftRawMeta[x].contractAddress);
-
-            //     var tokenURL = await NftContract.methods.tokenURI(nftRawMeta[x].tokenID).call().catch((err: any) => {
-            //         console.log(err);
-            //     })
-
-            //     try {
-            //         fetch(tokenURL)
-            //             .then(res => res.json())
-            //             .then(data => {
-            //                 nftMeta.push({
-            //                     image_url: data.image,
-            //                     permalink: "https://opensea.io/assets/" + nftRawMeta[x].contractAddress + "/" + nftRawMeta[x].tokenID
-            //                 })
-            //                 totalNFTs += 1;
-            //             })
-            //     } catch (error) {
-            //         console.log(error);
-            //     }
-
-            //     console.log("tokenURI: " + tokenURL);
-            // } catch (error) {
-            //     console.log(error);
-            // }
-        }
-
-        // setTotalNfts(totalNFTs);
-        // setUserNfts(nftMeta)
-        // setLoadedNFTs(true);
-
-        // fetch("https://api.opensea.io/api/v1/assets?order_direction=desc&offset=" + offset + "&limit=50&owner=" + userAddress)
-        //     .then(res => res.json())
-        //     .then(data => {
-        //         for (let i = 0; i < data.assets.length; i++) {
-        //             nftMeta.push({
-        //                 image_url: data.assets[i].image_url,
-        //                 permalink: data.assets[i].permalink
-        //             })
-        //             totalNFTs += 1;
-        //         }
-        //         if (data.assets.length >= 50) {
-        //             getUserNFTS(userAddress, offset += 49, totalNFTs);
-        //         }
-        //         setTotalNfts(totalNFTs);
-        //         setUserNfts(nftMeta)
-        //         setLoadedNFTs(true);
-        //     })
     }
 
     //Move to "Resovle ETH function in utils" a.k.a raise money and hire someone .... 
@@ -440,9 +263,8 @@ export function Search() {
             setSearchedAddress(address);
 
             nftMeta = [];
-            nftRawMeta = [];
 
-            await getUserNFTS(address, 0, 0, web3);
+            await getUserNFTS(address, 0, 0);
             await getERC20tokens(address, web3);
         }
     }
@@ -476,11 +298,6 @@ export function Search() {
 
     useEffect(() => {
         loadWeb3();
-        if (window.innerWidth >= 999) {
-            setIsMobile(false);
-        } else {
-            setIsMobile(true);
-        }
         //TO DO
 
         //1.) Add .ens name not found / resloved. -> add link to purchase ENS name.
@@ -500,19 +317,12 @@ export function Search() {
 
     return (
         <>
-        {!isMobile && <>
-            <DesktopSearch />
-        </>}
+            <div>
 
-        {isMobile && <> 
-        <Container>
-        <ThemeProvider theme={theme}>
-            <div Style="text-align: center;">
                 <ButtonBox>
-                    <Button style={{ minWidth: '100%', maxWidth: '100%' }}
+                    <Button style={{ minWidth: '182px', maxWidth: '100px' }}
                         size="large"
                         variant="outlined"
-                        color="primary"
                         onClick={() => loadWeb3()}
                     >
                         {cutUserAddress}
@@ -523,7 +333,7 @@ export function Search() {
                 <MobileBox>
                     {state == "home" &&
                         <>
-                            <h1> Search ENS </h1>
+                            <h1> DAO - NFT - ERC</h1>
                         </>
                     }
 
@@ -533,6 +343,11 @@ export function Search() {
                         </>
                     }
 
+
+                    <TopNavBar>
+                        <h2 onClick={() => setState("home")}> Query </h2>
+                        <h2 onClick={() => setState("FloorCheck")}> Floor Check </h2>
+                    </TopNavBar>
                 </MobileBox>
 
 
@@ -540,19 +355,13 @@ export function Search() {
 
                 {state == "FloorCheck" &&
                     <>
-
-                    <TopNavBar>
-                        <h2 onClick={() => setState("home")}> Query </h2>
-                        <h2 onClick={() => setState("FloorCheck")}> Floor Check </h2>
-                    </TopNavBar>
                         <ListFloor />
                     </>
                 }
 
                 {state == "home" &&
                     <>
-                        <div Style="margin-top: -40px;">
-                                <div Style="margin-left: 25px; margin-right: 25px;">
+                        <div>
                             <form onSubmit={searchAddress} >
                                 <Autocomplete
                                     options={[]}
@@ -580,9 +389,6 @@ export function Search() {
                                     )}
                                 />
                             </form>
-                            </div>
-
-
 
                             <a href={"https://etherscan.io/address/" + searchedAddress}>
                                 <UserMetaBox>
@@ -642,25 +448,22 @@ export function Search() {
 
                         <h2> Total: ${((ens_price * parseFloat(ensAmount)) + (gtc_price * parseFloat(gtcAmount)) + (uni_price * parseFloat(uniAmount) + (price * parseFloat(userEthAmount)))).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} </h2>
 
-                        <h2> NFT Collections: {totalNfts} </h2>
+                        <h2> Total Nfts: {totalNfts} </h2>
                         {loadedNFTs && <>
                             {userNfts.map((data =>
                                 <>
-                                    {data.image_url && data.permalink != "0" && <>
-                                        <p> {data.image_url} ({data.permalink}) </p>
-                                    </>}
-                                    {/* {data.image_url &&
+                                    {data.image_url &&
                                         <>
                                             <UserNftImageBox>
                                                 <a href={data.permalink} >
-                                                    <img src={data.image_url}
+                                                    <Image src={data.image_url}
                                                         alt="Image Not Found"
                                                         height={100}
                                                         width={100}
                                                     />
                                                 </a>
                                             </UserNftImageBox>
-                                        </>} */}
+                                        </>}
                                 </>
                             ))}
                         </>
@@ -669,9 +472,6 @@ export function Search() {
                     </>
                 }
             </div>
-            </ThemeProvider>
-            </Container>
-            </>}
         </>
     );
 }

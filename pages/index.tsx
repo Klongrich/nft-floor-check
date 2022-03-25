@@ -7,7 +7,7 @@ import Search from "./Search";
 
 const Home: NextPage = () => {
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>NFT-Alpha</title>
         <meta name="NFT-Alpha" content="Next Generation Information Exchange" />
