@@ -77,6 +77,7 @@ const UserNftImageBox = Styled.div`
 const Container = Styled.div`
     background-color: #f0ebe6;
     font-family: Helvetica;
+    text-align: center;
 `
 
 const UserMetaBox = Styled.div`
@@ -147,6 +148,14 @@ const MobileBox = Styled.div`
     }
 `
 
+const SearchBoxContainer = Styled.div`
+margin-left: 25px; 
+margin-right: 25px;
+`
+
+const CenterBox = Styled.div`
+margin-top: -40px;
+`
 
 // The minimum ABI to get ERC20 Token balance
 const ERC_20_ABI = [
@@ -328,7 +337,9 @@ export function Search() {
             tokenNames[i] = nftData[i].tokenName;
         }
 
+        //@ts-ignore
         let uniqueTokenAddresses = [...new Set(tokenAddresses)]
+        //@ts-ignore
         let uniqueTokenNames = [...new Set(tokenNames)]
 
         console.log(uniqueTokenAddresses);
@@ -507,7 +518,6 @@ export function Search() {
         {isMobile && <> 
         <Container>
         <ThemeProvider theme={theme}>
-            <div Style="text-align: center;">
                 <ButtonBox>
                     <Button style={{ minWidth: '100%', maxWidth: '100%' }}
                         size="large"
@@ -551,8 +561,8 @@ export function Search() {
 
                 {state == "home" &&
                     <>
-                        <div Style="margin-top: -40px;">
-                                <div Style="margin-left: 25px; margin-right: 25px;">
+                        <CenterBox>
+                            <SearchBoxContainer>
                             <form onSubmit={searchAddress} >
                                 <Autocomplete
                                     options={[]}
@@ -580,7 +590,7 @@ export function Search() {
                                     )}
                                 />
                             </form>
-                            </div>
+                            </SearchBoxContainer>
 
 
 
@@ -634,7 +644,7 @@ export function Search() {
                                 coins={parseFloat(aaveAmount)}
                             />
 
-                        </div>
+                        </CenterBox>
 
                         <br />
                         <br />
@@ -668,7 +678,6 @@ export function Search() {
 
                     </>
                 }
-            </div>
             </ThemeProvider>
             </Container>
             </>}
